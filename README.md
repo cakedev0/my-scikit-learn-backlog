@@ -18,7 +18,8 @@ candidate that I read, re-run and decide on before opening anything.
   calibration examples.
 - `bug-hunting/TEMPLATE.md`: the template each backlog file follows.
 - `.claude/commands/`: Claude Code commands, available when running `claude`
-  from the root of this repo.
+  from this repo. I also symlink them from `~/.claude/commands/` to use them
+  from my scikit-learn checkout.
 - `scripts/`: helpers called by the commands (they only read from GitHub).
 
 ## Commands
@@ -40,6 +41,8 @@ anything on GitHub.
 ## Setup
 
 - `gh` authenticated, and `jq`.
+- This repo cloned at `~/my-scikit-learn-backlog` (where the commands look
+  for it when run from elsewhere).
 - A scikit-learn checkout next to this repo (`../scikit-learn`), with an
   `upstream` remote on scikit-learn/scikit-learn. Triage reads code on
   `upstream/main` there.

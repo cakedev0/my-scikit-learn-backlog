@@ -5,6 +5,10 @@ argument-hint: <github-username>
 
 # Investigate a GitHub User's Contribution Pattern
 
+Paths: `<backlog>` is the root of the my-scikit-learn-backlog clone (the
+current directory if it contains `bug-hunting/`, otherwise
+`~/my-scikit-learn-backlog`).
+
 Open-source maintainers are increasingly seeing PRs from accounts (human or bot)
 that clearly did not engage with the codebase they're "fixing" — often visible
 because the same account is simultaneously blitzing dozens of unrelated repos
@@ -25,7 +29,7 @@ Requires `gh` (GitHub CLI) authenticated (`gh auth status`) and `jq`.
 
 2. **Fetch the raw data.**
    ```
-   bash scripts/investigate-github-user/fetch_activity.sh <username> <outdir>
+   bash <backlog>/scripts/investigate-github-user/fetch_activity.sh <username> <outdir>
    ```
    Use a scratch directory for `<outdir>` (e.g. under the session scratchpad).
    This pulls: profile info, last ~90 days of public events, up to 1000
@@ -36,7 +40,7 @@ Requires `gh` (GitHub CLI) authenticated (`gh auth status`) and `jq`.
 
 3. **Run the quantitative analysis.**
    ```
-   python3 scripts/investigate-github-user/analyze_activity.py <outdir>
+   python3 <backlog>/scripts/investigate-github-user/analyze_activity.py <outdir>
    ```
    This prints a single JSON report with, notably:
    - `pr_volume.distinct_repos_per_pr` — near 1.0 means the account almost

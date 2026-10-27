@@ -5,6 +5,12 @@ argument-hint: <issue-or-pr-number|url> [more numbers...]
 
 # Triage: is this issue/PR worth our time?
 
+Paths: `<backlog>` is the root of the my-scikit-learn-backlog clone (the
+current directory if it contains `bug-hunting/`, otherwise
+`~/my-scikit-learn-backlog`). `<sklearn>` is the scikit-learn checkout with the
+`upstream` remote (the current directory if it is one, otherwise
+`<backlog>/../scikit-learn`).
+
 Maintainers juggle dozens of important subjects. With AI-assisted code
 audits, almost every incoming bug report is real: correctness is no longer
 the question, and "the bug is real" or "the fix is one line" is not a reason
@@ -33,7 +39,7 @@ gh api repos/<repo>/issues/<N> --jq '{title, user: .user.login, assoc: .author_a
 ```
 
 - **Issue**: `gh issue view <N> --repo <repo> --comments`.
-- **PR**: `/usr/bin/python3 scripts/pr-review/fetch_pr_context.py <N> <scratchpad>/triage-<N>`,
+- **PR**: `/usr/bin/python3 <backlog>/scripts/pr-review/fetch_pr_context.py <N> <scratchpad>/triage-<N>`,
   then read `pr.md`, `discussion.md`, and `refs/<M>.md` for the issues it
   closes. The impact of a PR is mostly the impact of the problem it solves, so
   assess that issue too (even when it was opened by someone else).
@@ -70,8 +76,8 @@ effort on the trigger, not on confirming the bug.
    crash, misleading error, warning, slowness, doc mismatch).
 
 2. **Quick sanity check, not a verification.** Read the code involved on
-   `upstream/main` (`git -C ../scikit-learn show upstream/main:<path>`, after
-   `git -C ../scikit-learn fetch upstream`) just enough to know the conditions the bug needs, and check it
+   `upstream/main` (`git -C <sklearn> show upstream/main:<path>`, after
+   `git -C <sklearn> fetch upstream`) just enough to know the conditions the bug needs, and check it
    wasn't already fixed (`git log upstream/main --oneline -15 -- <file>`,
    `doc/whats_new/upcoming_changes/`). Run the reproducer (with
    `OMP_NUM_THREADS=2`, under ~10 s) only when it's cheap or when the claim
@@ -117,8 +123,8 @@ effort on the trigger, not on confirming the bug.
    exists?
 
 5. **Place it on the backlog scale.** Give a priority 0-4 using the scale
-   and calibration examples of `bug-hunting/INSTRUCTIONS.md`, and search the
-   backlog for the same bug (`grep -ril "<Estimator>\|<function>" issues/`).
+   and calibration examples of `<backlog>/bug-hunting/INSTRUCTIONS.md`, and search the
+   backlog for the same bug (`grep -ril "<Estimator>\|<function>" <backlog>/issues/`).
    A match gives you its priority and prior analysis; reuse it rather than
    redoing it, but re-check it against what the new report adds.
 

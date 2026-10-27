@@ -2,10 +2,12 @@
 
 See `README.md` for the layout and the commands.
 
-- Run commands and scripts from the root of this repo: the commands call
-  `scripts/...` with relative paths.
+- The commands in `.claude/commands/` are also symlinked from
+  `~/.claude/commands/`, so they run from the scikit-learn checkout too. Keep
+  their paths as `<backlog>/...` and `<sklearn>`, not relative paths.
 - The scikit-learn code lives in `../scikit-learn` (remote `upstream` is
-  scikit-learn/scikit-learn). Read upstream code with
+  scikit-learn/scikit-learn); `../scikit-learn/issues` is a symlink to
+  `issues/` here. Read upstream code with
   `git -C ../scikit-learn show upstream/main:<path>`. Never switch its branch
   or stash in it: other agents use it. Use a worktree if you need PR code.
 - Never write to GitHub (comments, labels, reviews, issues, PRs) unless I ask

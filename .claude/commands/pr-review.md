@@ -5,6 +5,12 @@ argument-hint: <pr-number|pr-url> [low|medium|high|xhigh|max] [other /code-revie
 
 # Context-aware PR review
 
+Paths: `<backlog>` is the root of the my-scikit-learn-backlog clone (the
+current directory if it contains `bug-hunting/`, otherwise
+`~/my-scikit-learn-backlog`). `<sklearn>` is the scikit-learn checkout with the
+`upstream` remote (the current directory if it is one, otherwise
+`<backlog>/../scikit-learn`).
+
 Review the PR given in `$ARGUMENTS` like a maintainer who has read the whole
 thread first. Plain `/code-review` only sees the diff, so it re-raises points
 that were already discussed, contradicts decisions reviewers already took, and
@@ -28,7 +34,7 @@ explicitly asks after seeing the report.
 ## 1. Fetch the PR thread
 
 ```
-/usr/bin/python3 scripts/pr-review/fetch_pr_context.py <pr> <scratchpad>/pr-<N>
+/usr/bin/python3 <backlog>/scripts/pr-review/fetch_pr_context.py <pr> <scratchpad>/pr-<N>
 ```
 
 This writes `pr.md` (metadata, description, changed files, commits),
@@ -85,7 +91,7 @@ Invoke the `code-review` skill with the PR number and the forwarded level and
 flags. Read and understand the change well before judging it, especially for
 large diffs. Keep the brief in mind while doing so.
 
-Do not switch the branch of the scikit-learn checkout to look at the PR code. Use `gh pr diff`, or a
+Do not switch the branch of `<sklearn>` to look at the PR code. Use `gh pr diff`, or a
 worktree on `upstream pull/<N>/head` if you need the files. When a finding is
 a potential bug, check the tests don't already cover it and try to trigger it
 with a minimal reproducer. If the PR code is not built locally, say the
