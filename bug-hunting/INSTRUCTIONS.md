@@ -18,13 +18,14 @@ missing one: when in doubt, dig deeper or don't file.
 ## Hard rules
 
 - **Never write to GitHub.** No `gh issue create`, no comments, no PRs, no
-  `git push` (the `upstream` remote has push access), and no commits in the
-  backlog repo: the maintainer commits the backlog. `gh` is for reading only.
+  `git push` (the `upstream` remote has push access), including in the
+  backlog repo. `gh` is for reading only.
 - **Never modify files outside `issues/`.** No edits under `sklearn/`, no
   `pip install`, no rebuild, no `git checkout`/`stash`/`switch` in the shared
   checkout. Reproducers and scratch scripts go in your scratchpad directory.
-- **One bug per file.** Never edit another agent's file, except to append a
-  short "See also" line linking your file to it.
+- **One bug per file, one commit per bug.** Never edit another agent's file,
+  except to append a short "See also" line linking your file to it. Commit
+  only your own files (step 7), never anything else in the backlog repo.
 
 ## What counts as a bug
 
@@ -155,6 +156,23 @@ Fill every section. Keep the JSON block valid JSON (no comments, double quotes),
 as it will be parsed by scripts. Write the prose so it could be pasted into an
 upstream issue: concise, user impact first, no filler. If the
 `writing-style` skill is available, load it.
+
+### 7. Commit it
+
+Commit the new file, alone, in the backlog repo (`~/my-scikit-learn-backlog`),
+with the title of the file as message, prefixed by the module:
+
+```bash
+cd ~/my-scikit-learn-backlog
+git add issues/<file>.md
+git commit -m "<module>: <title>" -- issues/<file>.md
+```
+
+Passing the paths after `--` commits only them, even if other agents have
+staged files at the same time. If you appended a "See also" line to another
+file, add that path to the same commit. If git fails because
+`.git/index.lock` exists, another agent is committing: wait a few seconds and
+retry, never delete the lock. Don't push.
 
 ## Classification scales
 
@@ -293,3 +311,4 @@ decision 0 usually has no tags, or maybe just something like rng-order):
       level.
 - [ ] JSON block is valid; `existing_issue` and `reproduced` set.
 - [ ] Root cause points to `file:line`; versions include the commit hash.
+- [ ] Committed alone in the backlog repo, not pushed.

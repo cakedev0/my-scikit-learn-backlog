@@ -14,3 +14,4 @@ See `README.md` for the layout and the commands.
   after seeing the report.
 - New backlog entries follow `bug-hunting/INSTRUCTIONS.md` and
   `bug-hunting/TEMPLATE.md`. Keep the JSON block of each file valid JSON.
+  One new backlog entry = one commit (`<module>: <title>`), don't push.
