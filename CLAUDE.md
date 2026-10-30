@@ -15,3 +15,5 @@ See `README.md` for the layout and the commands.
 - New backlog entries follow `bug-hunting/INSTRUCTIONS.md` and
   `bug-hunting/TEMPLATE.md`. Keep the JSON block of each file valid JSON.
   One new backlog entry = one commit (`<module>: <title>`), don't push.
+- `TODO.md` and `todo/` are my work todo list. Follow `todo/INSTRUCTIONS.md`
+  when editing them. They are public: only what could be posted on GitHub.

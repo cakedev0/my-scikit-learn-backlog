@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Add an item at the end of the Inbox of TODO.md and commit it.
+# Usage: add <text...>
+set -euo pipefail
+
+text="$*"
+[ -n "$text" ] || { echo "usage: $(basename "$0") <text>" >&2; exit 2; }
+cd "$(dirname "$(readlink -f "$0")")/../.."
+
+/usr/bin/python3 - "$text" <<'EOF'
+import sys
+from pathlib import Path
+
+path = Path("TODO.md")
+lines = path.read_text().splitlines()
+start = lines.index("## Inbox") + 1
+end = next(i for i in range(start, len(lines)) if lines[i].startswith("## "))
+items = [i for i in range(start, end) if lines[i].startswith("- ")]
+at = items[-1] + 1 if items else start + 1
+lines[at:at] = [f"- {sys.argv[1]}"] + ([""] if not items else [])
+path.write_text("\n".join(lines) + "\n")
+EOF
+
+git commit -q -m "add: $text" -- TODO.md
+git log -1 --format='%h %s'
