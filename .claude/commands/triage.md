@@ -193,11 +193,14 @@ real. Don't invite
 the author to come back with a use case, and never suggest example
 scenarios: an AI-assisted author will just make one up. When step 2 found a
 Medium or High concern, also name the pattern factually (e.g. "N PRs on N
-unrelated projects within N hours, with AI-written descriptions") and link
-the [Automated Contributions
+unrelated projects within N hours", "3 PRs for this in 2 hours, 2 closed
+within 2 minutes") and link the [Automated Contributions
 Policy](https://scikit-learn.org/dev/developers/contributing.html#automated-contributions-policy),
-pointing at the rule that applies (unreviewed AI output, AI-generated
-descriptions, missing disclosure). Stick to what the account's public activity
-shows, without guessing at intent. Never post it; the user does.
+pointing at the rule that the record or the author's own AI disclosure makes
+relevant (unreviewed AI output, AI-generated descriptions, missing
+disclosure). Stick to verifiable facts (timestamps, counts, what the
+disclosure says), without guessing at intent. Never judge how the author's
+text reads ("reads as AI-generated", "looks LLM-written"): it's subjective
+and invites an argument. Never post it; the user does.
 
 Targets: $ARGUMENTS
