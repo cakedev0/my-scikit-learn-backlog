@@ -1,0 +1,8 @@
+{
+    // PKief.markdown-checkbox: keep ticked items as plain `- [x] ...` lines,
+    // which /todo-sync parses (see todo/INSTRUCTIONS.md).
+    "markdown-checkbox.typeOfBulletPoint": "-",
+    "markdown-checkbox.checkmark": "x",
+    "markdown-checkbox.strikeThroughWhenChecked": false,
+    "markdown-checkbox.dateWhenChecked": false
+}

@@ -98,8 +98,10 @@ appends new items at the end of their section and never reorders the rest.
 
 ## Removing items: done and drop
 
-I mark an item done by ticking its box (`- [x]`), in an editor or with the
-pencil on GitHub (GitHub doesn't make checkboxes clickable in files). I drop
+I mark an item done by ticking its box (`- [x]`): in VS Code with the
+Markdown Checkbox extension (Ctrl+Shift+Enter, or the checkbox picker in the
+status bar; `.vscode/settings.json` keeps the line plain), or with the pencil
+on GitHub (GitHub doesn't make checkboxes clickable in files). I drop
 one by deleting its line. Ticked items stay until the next sync, which
 removes them. The list itself only holds open items; the commit messages
 keep the record:
@@ -137,8 +139,9 @@ Apply these rules:
 0. **My edits since the last sync**, in the working tree or in commits
    without `add:` / `done:` / `drop:` / `todo:` lines (e.g. "Update TODO.md"
    from the GitHub editor):
-   - Ticked items (`- [x]`, in `TODO.md` or `todo/stale.md`): remove them
-     and their detail file, as `done:`.
+   - Ticked items (`- [x]` or `- [X]`, maybe wrapped in `~~` or followed by
+     a `[date]` by an editor extension, in `TODO.md` or `todo/stale.md`):
+     remove them and their detail file, as `done:`.
    - Deleted lines: record them as `drop:` (they are already gone).
    - New lines: record them as `add:`, and fix their format if needed.
 1. **Tracked threads**:
