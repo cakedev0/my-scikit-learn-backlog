@@ -45,7 +45,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: follow up on [sklearn#34994](https://github.com/scikit-learn/scikit-learn/pull/34994) (random projections `get_feature_names_out`; approved, waiting for the author to mark it ready)
 - [ ] Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - [ ] Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
-- [ ] Linear: follow up on [sklearn#35247](https://github.com/scikit-learn/scikit-learn/pull/35247) (betatim's refresh of the global_random_seed coordinate descent tests): is it worth doing? I closed [sklearn#32991](https://github.com/scikit-learn/scikit-learn/pull/32991) to discuss it there
 
 ## Later
 
