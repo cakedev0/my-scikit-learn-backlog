@@ -94,10 +94,18 @@ large diffs. Keep the brief in mind while doing so.
 Do not switch the branch of `<sklearn>` to look at the PR code. Use `gh pr diff`, or a
 worktree on `upstream pull/<N>/head` if you need the files. When a finding is
 a potential bug, check the tests don't already cover it and try to trigger it
-with a minimal reproducer. If the PR code is not built locally, say the
-reproducer was not run rather than claiming it was.
+with a minimal reproducer (step 5b decides what happens to findings without
+one). If the PR code is not built locally, say the reproducer was not run
+rather than claiming it was.
 
-## 5. Reconcile findings with the context
+## 5. Reconcile and filter findings
+
+`/code-review` is tuned for recall: it reports plausible edge cases that cost
+a human reviewer much more to check than they are worth. This step is the
+filter. Cheap findings may pass freely. Expensive ones have to earn their
+place.
+
+### 5a. Against the context
 
 Go through every finding from the review and against the brief:
 
@@ -113,16 +121,68 @@ Go through every finding from the review and against the brief:
   current diff does not address, and resolved threads whose resolution does
   not match the code.
 
+### 5b. Against real impact
+
+Split the findings in two:
+
+- **Nits**: anything the user can check from the diff alone in under a
+  minute: naming, a wrong docstring or comment, dead code, a missing
+  changelog entry or test, a convention mismatch. Keep them. They are cheap
+  even when the user disagrees.
+- **Behavioral findings**: anything claiming the code does the wrong thing
+  for some input or state. Each one has to pass all of the gates below.
+
+1. **Argue against it first.** Before keeping a behavioral finding, make the
+   strongest case that it does not matter in practice: input validation or
+   an upstream check already rules the input out, no public estimator or
+   documented workflow reaches this path, the trigger needs a combination
+   nobody uses, the consequence is a clear error with an obvious fix. Look
+   for that check in the code, don't assume it. Keep the finding only if
+   this argument fails.
+2. **Classify the impact.** Ask "who hits this, doing what, and what happens
+   to them?", not "is this technically wrong?":
+   - **Real**: users plausibly hit it in normal use and the consequence
+     matters. Keep.
+   - **Edge case**: reachable by a sensible user, but needs a niche
+     combination of inputs or parameters. Keep only when the consequence is
+     silent wrong results (or a crash in a supported, documented setting);
+     drop it when there is a clear error or a cheap workaround.
+   - **Artifact**: only reachable through contrived inputs (`n_samples=1`,
+     NaN in `sample_weight`, float16, a custom estimator written to expose
+     it), private API, monkeypatching, or states that validation already
+     prevents. Drop.
+3. **Reproduce it.** A behavioral finding goes in the main list only if a
+   reproducer using the public API with realistic data was actually run and
+   showed the problem. Without one (code not built, reproducer too costly,
+   reproducer did not trigger it), move it to the "unverified" list.
+4. **Check it is introduced by the PR.** Run the reproducer on main, or check
+   `git blame` when there is no reproducer. A bug already on main is out of
+   scope by default: drop it to the dropped list. Keep it when fixing it
+   belongs in this PR: the PR rewrites that code anyway, the PR makes it
+   easier to hit, or it is the same bug the PR fixes in a sibling code path.
+   Say which in the finding.
+
+The number of findings must come out of the filter, never out of a target.
+Zero findings is a normal result for a good PR: say so plainly rather than
+promoting nits or edge cases to fill the report. A large PR with real
+problems can just as well have 10 or 20, and that is fine too.
+
 ## 6. Report
 
 In the terminal:
 
 1. The condensed context brief (intent, decisions, open points, prior art).
-2. Findings, most severe first, each with `file:line`, what is wrong, a
-   concrete failure scenario or reproducer, and its context tag (new /
-   still-open from @reviewer / diverges from #NNNN).
-3. A short list of review findings dropped because the thread already settled
-   them, one line each with the link, so the user can disagree.
-4. Next step: for someone else's PR, offer to draft review comments (load the
+2. Behavioral findings that passed 5b, most severe first, each with
+   `file:line`, what is wrong, the reproducer that was run (and who hits it,
+   in one line), and its context tag (new / still-open from @reviewer /
+   diverges from #NNNN / pre-existing but belongs here because ...). If none
+   passed, say so in one line.
+3. Nits, grouped, one line each.
+4. Unverified: behavioral findings that passed the impact gates but could
+   not be reproduced, one line each with what blocked the reproducer.
+5. Dropped: findings filtered out, one line each with the reason (settled
+   in the thread with a link / artifact / edge case with a clear error /
+   pre-existing on main), so the user can disagree.
+6. Next step: for someone else's PR, offer to draft review comments (load the
    `writing-style` skill for that) and, only on request, post them. For the
    user's own PR, offer to apply the fixes.
