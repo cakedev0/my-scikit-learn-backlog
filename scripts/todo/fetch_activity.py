@@ -323,9 +323,9 @@ def main():
         t["removed"] = removed.get(url)
         to_me = t.pop("_to_me")
         if t["removed"]:
-            since = parse_time(t["removed"]["time"])
+            removed_at = parse_time(t["removed"]["time"])
             t["removed"]["back"] = t["move"] != "closed" and any(
-                parse_time(time) > since for time in to_me
+                parse_time(time) > removed_at for time in to_me
             )
         threads.append(t)
     order = {"me": 0, "them": 1, "closed": 2}
