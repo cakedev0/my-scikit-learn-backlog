@@ -36,19 +36,26 @@ Then list my own edits since the last sync: the uncommitted ones
 Rule 0 of the instructions says how to record them (ticked items are done,
 deleted lines are dropped).
 
-## 2. Look closer where the rows aren't enough
+## 2. Read what is expected from me
 
-The `move` and `reasons` columns are heuristics. Before adding a thread to
-`Now`, or skipping a `new-activity` one, read the comments since my last
-activity when the title doesn't make it obvious:
+`move: me` only says someone acted after me. Before adding a thread, adding
+one back, or changing an item's action, read the activity since my last
+one, for every such thread, whatever the title says:
 
 ```
 gh api repos/<owner>/<repo>/issues/<N>/comments --jq '.[-5:][] | "\(.user.login) \(.created_at[:10]): \(.body[:400])"'
 ```
 
-For a PR, also `gh pr view <N> --repo <owner>/<repo> --json reviews --jq '.reviews[-3:][] | "\(.author.login) \(.state): \(.body[:400])"'`.
-Use what you read to write the action ("answer lorentzenchr's question on
-the solver choice").
+For a PR, also the reviews and the inline review comments:
+
+```
+gh api repos/<owner>/<repo>/pulls/<N>/reviews --jq '.[-3:][] | "\(.user.login) \(.state): \(.body[:400])"'
+gh api repos/<owner>/<repo>/pulls/<N>/comments --jq '.[-5:][] | "\(.user.login) \(.created_at[:10]): \(.body[:300])"'
+```
+
+Then apply the "expected from me" test of the instructions: no item for a
+thanks, an approval, a settled answer, others talking. The action says what
+is expected ("answer lorentzenchr's concerns on the condition number").
 
 ## 3. Edit
 

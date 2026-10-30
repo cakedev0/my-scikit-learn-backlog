@@ -154,6 +154,23 @@ without my OK.
 `new-activity:<logins>`, `ci-failed`, `conflicts`, `assigned`), and since
 when the ball is in my court (`waiting_since`).
 
+`move: me` only means someone acted after me, not that they expect
+anything from me. A thread gets an item, in `Now` or `Reviews`, only when
+the comments since my last activity (always read them, inline review
+comments included) expect a reply or an action from me:
+
+- yes: a question to me, a review of my PR with points to address,
+  requested changes, my review requested, the author saying they addressed
+  my review, a mention that asks me something, a red CI or conflicts on my
+  PR;
+- no: thanks, an approval, an answer to my question that settles it, a
+  status update, a discussion between others, someone else's review, a
+  general call for reviews on a PR I'm not reviewing, a bot.
+
+The item says what is expected ("answer lorentzenchr's concerns on the
+condition number"), not just who posted. In doubt, don't add it: list it in
+the report and ask.
+
 Apply these rules:
 
 0. **My edits since the last sync**, in the working tree or in commits
@@ -173,10 +190,8 @@ Apply these rules:
    - When an item's `waiting_since` gets more than three weeks old, add
      "since <date>" to its context, so I see what has waited too long.
 2. **New threads** (not tracked):
-   - Add, in `Now`: my PRs with a review or a comment from someone else
-     since my last activity, red CI or conflicts on my upstream PRs, my
-     reports with a reply from a maintainer or from the project's
-     developers, mentions that ask me something.
+   - Add, in `Now`: my PRs and reports where something is expected from me
+     (see above), red CI or conflicts on my upstream PRs.
    - Add, in `Reviews`: review requests (self-requested ones first), and PRs
      I already reviewed that got new commits or replies.
    - Threads I commented on since the last sync without being the author
