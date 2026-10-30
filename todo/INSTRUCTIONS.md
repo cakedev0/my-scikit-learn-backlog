@@ -126,6 +126,8 @@ keep the record:
 
 - `add: <item>`: a new item.
 - `done: <item>`: finished (a PR merged, a reply posted, an idea tried).
+  Keep the refs of the item (`sklearn#N`): the sync matches them to know a
+  thread was done, not dropped.
 - `drop: <item>`: abandoned for now, may come back one day.
 - `todo: <what>`: anything else (rewording, moving, reordering).
 
@@ -194,9 +196,16 @@ Apply these rules:
      (an old RFC, a PR to revive), put it in `Later`, with "follow up on" or
      "revive or close" as its action.
 3. **Removed threads** (`removed` is set: the thread was on the list before
-   and I removed it): don't add it back. If there was new activity that
-   needs me after the removal date (a review request, a mention, a review on
-   my PR), list it in the report and ask.
+   and I removed it). `removed.kind` says how, from the `done:` / `drop:`
+   line naming it in the removing commit (`unknown` when none does), and
+   `removed.back` whether someone acted on it since (a comment, a review,
+   new commits, a review request):
+   - `done` and `back`: a new round (more commits on a PR I reviewed, a
+     reply to my answer). Add it again, as for a new thread.
+   - `done` without `back`: leave it out.
+   - `drop` or `unknown`: don't add it back. If `back` and the activity
+     needs me (a review request, a mention, a review on my PR), list it in
+     the report and ask.
 4. **Inbox**: sort each item into its section, with its theme, and the
    links resolved to full URLs. Ask when the right section isn't clear.
 

@@ -27,7 +27,7 @@ import json
 import re
 import subprocess
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 BACKLOG = Path(__file__).resolve().parents[2]
@@ -129,31 +129,52 @@ def tracked_urls():
 
 
 def removed_urls(current):
-    """URLs that were once on the list and no longer are -> (date, subject)."""
+    """URLs that were once on the list and no longer are.
+
+    -> {url: {"time", "commit", "kind"}}, where kind is "done" or "drop" when
+    a `done:` or `drop:` line of the removing commit names the thread's
+    number, "unknown" otherwise.
+    """
     log = run(
-        "git", "log", "--reverse", "-p", "--format=COMMIT %cs %s", "--",
+        "git", "log", "--reverse", "-p", "--format=COMMIT %H %cI", "--",
         "TODO.md", "todo/", cwd=BACKLOG,
     )  # fmt: skip
     removed, commit = {}, None
     for line in log.splitlines():
         if line.startswith("COMMIT "):
-            commit = line[len("COMMIT ") :].split(" ", 1)
+            commit = tuple(line.split()[1:3])
         elif line.startswith("-") and not line.startswith("---"):
             for url in URL_RE.findall(line):
                 removed[url] = commit
         elif line.startswith("+") and not line.startswith("+++"):
             for url in URL_RE.findall(line):
                 removed.pop(url, None)
-    return {
-        url: {"date": d, "commit": s}
-        for url, (d, s) in removed.items()
-        if url not in current
-    }
+
+    messages = {}
+    result = {}
+    for url, (sha, time) in removed.items():
+        if url in current:
+            continue
+        if sha not in messages:
+            messages[sha] = run("git", "show", "-s", "--format=%B", sha, cwd=BACKLOG)
+        number = url.rsplit("/", 1)[1]
+        kinds = {
+            line.split(":", 1)[0]
+            for line in messages[sha].splitlines()
+            if line.startswith(("done:", "drop:")) and re.search(rf"#{number}\b", line)
+        }
+        kind = kinds.pop() if len(kinds) == 1 else "unknown"
+        result[url] = {"time": time, "commit": sha[:7], "kind": kind}
+    return result
 
 
 def last_sync_date():
     out = run("git", "log", "-1", "--grep=^sync:", "--format=%cs", cwd=BACKLOG)
     return out.strip() or str(date.today() - timedelta(days=30))
+
+
+def parse_time(s):
+    return datetime.fromisoformat(s.replace("Z", "+00:00"))
 
 
 def is_bot(author):
@@ -231,6 +252,10 @@ def classify(node, user, roles):
         waiting.append(request["createdAt"])
     waiting_since = min(waiting)[:10] if move == "me" and waiting else None
 
+    # Events that hand the ball to me, to tell whether a thread came back
+    # after I removed it from the list.
+    to_me = [t for t, _, _ in others] + ([request["createdAt"]] if request else [])
+
     return {
         "url": node["url"],
         "kind": "pr" if pr else "issue",
@@ -257,6 +282,7 @@ def classify(node, user, roles):
         "ci": rollup,
         "mergeable": node.get("mergeable"),
         "created": node["createdAt"][:10],
+        "_to_me": to_me,
         "updated": node["updatedAt"][:10],
     }
 
@@ -295,6 +321,12 @@ def main():
         t = classify(node, user, roles.get(url, set()))
         t["tracked"] = url in tracked
         t["removed"] = removed.get(url)
+        to_me = t.pop("_to_me")
+        if t["removed"]:
+            since = parse_time(t["removed"]["time"])
+            t["removed"]["back"] = t["move"] != "closed" and any(
+                parse_time(time) > since for time in to_me
+            )
         threads.append(t)
     order = {"me": 0, "them": 1, "closed": 2}
     threads.sort(key=lambda t: (not t["tracked"], order[t["move"]], t["updated"]))
@@ -305,7 +337,10 @@ def main():
     print(f"since {since}: {len(threads)} threads, {len(tracked)} tracked")
     print("tracked\tmove\treasons\twaiting_since\tupdated\turl\ttitle")
     for t in threads:
-        flag = "yes" if t["tracked"] else ("removed" if t["removed"] else "no")
+        removed = t["removed"]
+        flag = "yes" if t["tracked"] else "no"
+        if removed:
+            flag = f"{removed['kind']}{'+back' if removed['back'] else ''}"
         reasons = " ".join(t["reasons"]) or "-"
         print(
             f"{flag}\t{t['move']}\t{reasons}\t{t['waiting_since'] or '-'}"
