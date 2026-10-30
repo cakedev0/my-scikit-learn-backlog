@@ -9,7 +9,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 ## Now
 
-- [ ] Maintenance: go through the threads waiting on me for 3+ weeks → [notes](todo/stale.md)
 - [ ] Maintenance: follow up on [sklearn#32728](https://github.com/scikit-learn/scikit-learn/pull/32728): open the PR or the issue to make `_safe_indexing` public, without the underscore, as I offered (ogrisel agrees, lorentzenchr reopened the PR until then)
 - [ ] HGB: answer FrancoisPgm on [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164))
 - [ ] KMeans: reply to ogrisel's mention in [sklearn#35238](https://github.com/scikit-learn/scikit-learn/issues/35238) (RFC array API KMeans), with his prototype [ogrisel/cursor-sandbox#17](https://github.com/ogrisel/cursor-sandbox/pull/17)
@@ -23,6 +22,17 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Upstream: answer syakov-intel on [sklearnex#3401](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3401) (RF `predict_proba` rows don't sum to 1)
 - [ ] GPU: check the red CI of [raft#3194](https://github.com/NVIDIA/raft/pull/3194) and [raft#3195](https://github.com/NVIDIA/raft/pull/3195) (small-nkeys kernel of `reduce_rows_by_key`)
 - [ ] Maintenance: answer AnneBeyer on [sklearn#34554](https://github.com/scikit-learn/scikit-learn/pull/34554) (approved; recursion PDP with categorical features)
+- [ ] Linear: resolve the conflicts of [sklearn#35030](https://github.com/scikit-learn/scikit-learn/pull/35030) (center X in GLMs, fixes [sklearn#35029](https://github.com/scikit-learn/scikit-learn/issues/35029): silently wrong coefficients on off-centered data; draft, since 2026-09-25)
+- [ ] Threads: fix the red CI of [sklearn#35090](https://github.com/scikit-learn/scikit-learn/pull/35090) (warning filters in thread-based `Parallel`, fixes [sklearn#35089](https://github.com/scikit-learn/scikit-learn/issues/35089); draft, since 2026-10-07)
+- [ ] Preprocessing: answer jeremiedbb on [sklearn#34858](https://github.com/scikit-learn/scikit-learn/pull/34858) (QuantileTransformer/RobustScaler densify sparse columns, see [sklearn#34857](https://github.com/scikit-learn/scikit-learn/issues/34857) and [sklearn#34298](https://github.com/scikit-learn/scikit-learn/issues/34298); since 2026-10-05)
+- [ ] Upstream: answer david-cortes-intel on [oneDAL#3820](https://github.com/uxlfoundation/oneDAL/issues/3820) (cross_entropy_loss changes between calls with 4+ threads; since 2026-09-30)
+- [ ] Benchmarks: answer Vika-F and david-cortes-intel on [benchmarks#129](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/129) (sklearnex TBB threads not limited under joblib; since 2026-10-08)
+- [ ] Benchmarks: answer david-cortes-intel on [benchmarks#93](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/93) (Anaconda in the envs matrix, he mentioned me; since 2026-10-09)
+- [ ] Threads: answer itamarst on [joblib#1869](https://github.com/joblib/joblib/issues/1869) (loky workers' thread count vs physical cores; since 2026-10-01)
+- [ ] Maintenance: answer StefanieSenger on [sklearn#35047](https://github.com/scikit-learn/scikit-learn/issues/35047) (BaggingClassifier with feature sub-sampling and routed `X_val`; since 2026-10-02)
+- [ ] Encoders: answer lorentzenchr and thomasjpfan on [sklearn#34387](https://github.com/scikit-learn/scikit-learn/issues/34387) (OrdinalEncoder treats missing values as unknown categories first; since 2026-09-25)
+- [ ] Benchmarks: answer lucascolley on [sklearn#34865](https://github.com/scikit-learn/scikit-learn/issues/34865) (Meson downgrades -O3 to -O2 under conda-forge CFLAGS; since 2026-09-04)
+- [ ] GPU: answer virchan on [probabl-ai/scikit-learn-intel-workflow#8](https://github.com/probabl-ai/scikit-learn-intel-workflow/issues/8) (keep the float32 GPU runner?; since 2026-08-22)
 
 ## Reviews
 
@@ -48,13 +58,14 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: review [sklearn#35259](https://github.com/scikit-learn/scikit-learn/pull/35259) (skip Python 3.15 for Pyodide wheels; mentioned)
 - [ ] Maintenance: review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 updated it)
 - [ ] Linear: follow up on [sklearn#32991](https://github.com/scikit-learn/scikit-learn/pull/32991): close it (lorentzenchr suggests it) or review betatim's refresh [sklearn#35247](https://github.com/scikit-learn/scikit-learn/pull/35247) (global_random_seed in the coordinate descent tests)
+- [ ] Trees: answer adrinjalali's mention on [sklearn#34558](https://github.com/scikit-learn/scikit-learn/pull/34558) (harden tree loading against corrupted files; since 2026-09-18)
 
 ## Waiting
 
 - [ ] HGB: get [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935) merged (mitigation heuristics for HGB scalability; approved by ogrisel), dashboards in [benchmarks#81](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/81)
 - [ ] HGB: [sklearn#35182](https://github.com/scikit-learn/scikit-learn/pull/35182) (split early stopping data after binning; draft, ogrisel commented)
 - [ ] KMeans: get [sklearn#35193](https://github.com/scikit-learn/scikit-learn/pull/35193) reviewed (Lloyd thread buffers), benchmarks in [benchmarks#154](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/154) and [benchmarks#160](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/160); with [OpenBLAS#6105](https://github.com/OpenMathLib/OpenBLAS/pull/6105) it should close [sklearn#17334](https://github.com/scikit-learn/scikit-learn/issues/17334)
-- [ ] Linear: [sklearn#34793](https://github.com/scikit-learn/scikit-learn/pull/34793) (Ridge centering trick for cholesky; approved by lorentzenchr), benchmarks in [benchmarks#115](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/115)
+- [ ] Linear: [sklearn#34793](https://github.com/scikit-learn/scikit-learn/pull/34793) (Ridge centering trick for cholesky; approved by lorentzenchr), benchmarks in [benchmarks#115](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/115) and [benchmarks#31](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/31) (has conflicts)
 - [ ] Linear: [sklearn#35260](https://github.com/scikit-learn/scikit-learn/pull/35260) (sparse incremental mean and variance in float64)
 - [ ] Linear: [benchmarks#156](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/156) (fit time vs suboptimality, scikit-learn vs glum)
 - [ ] Benchmarks: [benchmarks#141](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/141) (Pareto fronts of XGBoost, LightGBM and CatBoost vs HGB; ogrisel commented)
@@ -87,3 +98,10 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Benchmarks: run-to-run variability on multi-socket runners [benchmarks#80](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/80), OpenMP active wait polluting later timings [benchmarks#90](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/90), intel-laptop throttling [benchmarks#145](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/145)
 - [ ] Benchmarks: sparse datasets from pre-processed text [benchmarks#4](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/4)
 - [ ] GPU: move the Intel workflows to scikit-learn's CI? [probabl-ai/scikit-learn-intel-workflow#7](https://github.com/probabl-ai/scikit-learn-intel-workflow/issues/7)
+- [ ] Trees: follow up on my RFCs: [sklearn#34691](https://github.com/scikit-learn/scikit-learn/issues/34691) (unknown categories vs missing values in HGB and trees; adam2392 replied), [sklearn#33158](https://github.com/scikit-learn/scikit-learn/issues/33158) (why trees accept `splitter`; ogrisel replied), [sklearn#32384](https://github.com/scikit-learn/scikit-learn/issues/32384) (is optimizing trees worth the complexity?; adrinjalali, betatim, jjerphan replied)
+- [ ] Trees: follow up on [sklearn#32752](https://github.com/scikit-learn/scikit-learn/issues/32752) (doc of tie-breaking between equivalent splits): let one of the contributors asking take it, or close
+- [ ] Trees: revive or close [sklearn#34267](https://github.com/scikit-learn/scikit-learn/pull/34267) (deprecate the `ExtraTree*` classes; WIP, answer AnneBeyer)
+- [ ] Trees: upstream or close [fork#4](https://github.com/cakedev0/scikit-learn/pull/4) (GB line search regression)
+- [ ] Array API: upstream or close [fork#3](https://github.com/cakedev0/scikit-learn/pull/3) (`xpx.quantile` instead of `_weighted_percentile`)
+- [ ] Upstream: revive or close [numpy#30066](https://github.com/numpy/numpy/pull/30066) (weighted nanquantile broadcasting; answer seberg)
+- [ ] Encoders (paused): answer the mentions on [sklearn#34383](https://github.com/scikit-learn/scikit-learn/issues/34383) (faster string representation than `object`; itamarst), [sklearn#32161](https://github.com/scikit-learn/scikit-learn/issues/32161) (OrdinalEncoder by decreasing frequency), [sklearn#34445](https://github.com/scikit-learn/scikit-learn/pull/34445) and [sklearn#11379](https://github.com/scikit-learn/scikit-learn/issues/11379) (mixed-type columns; ranykamel)
