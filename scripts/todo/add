@@ -17,7 +17,7 @@ start = lines.index("## Inbox") + 1
 end = next(i for i in range(start, len(lines)) if lines[i].startswith("## "))
 items = [i for i in range(start, end) if lines[i].startswith("- ")]
 at = items[-1] + 1 if items else start + 1
-lines[at:at] = [f"- {sys.argv[1]}"] + ([""] if not items else [])
+lines[at:at] = [f"- [ ] {sys.argv[1]}"] + ([""] if not items else [])
 path.write_text("\n".join(lines) + "\n")
 EOF
 

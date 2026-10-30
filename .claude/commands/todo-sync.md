@@ -12,6 +12,13 @@ current directory if it contains `bug-hunting/`, otherwise
 Read `<backlog>/todo/INSTRUCTIONS.md` first: it has the item format, the
 sections and the sync rules. Never write to GitHub.
 
+## 0. Pull my edits from GitHub
+
+I may tick or edit items in the GitHub editor. Run `git -C <backlog> fetch`,
+and if `origin/main` has commits that aren't in the local branch,
+`git -C <backlog> pull --rebase --autostash`. On a conflict, abort the
+rebase and ask me.
+
 ## 1. Fetch
 
 ```
@@ -23,9 +30,11 @@ updated, URL, title) and writes the details to `threads.json` (author,
 roles, last activity of me and of others, who requested my review and when,
 review decision, CI, removal date). Takes ~1 min.
 
-If `git -C <backlog> status --short -- TODO.md todo/` shows uncommitted
-changes, they are mine: keep them, and include them in the sync commit as
-`todo:` lines.
+Then list my own edits since the last sync: the uncommitted ones
+(`git -C <backlog> diff -- TODO.md todo/`) and the commits after the last
+`sync:` one (`git -C <backlog> log -p <last sync>..HEAD -- TODO.md todo/`).
+Rule 0 of the instructions says how to record them (ticked items are done,
+deleted lines are dropped).
 
 ## 2. Look closer where the rows aren't enough
 
@@ -44,8 +53,8 @@ the solver choice").
 ## 3. Edit
 
 Apply the rules of the "Syncing from GitHub" section of the instructions to
-`TODO.md` and `todo/stale.md`: close done items, move items between
-sections, add the new threads, sort the Inbox. Keep the existing lines and
+`TODO.md` and `todo/stale.md`: remove the ticked items, close done items,
+move items between sections, add the new threads, sort the Inbox. Keep the existing lines and
 their order unless a rule says otherwise.
 
 ## 4. Commit and report

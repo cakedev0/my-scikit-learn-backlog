@@ -19,7 +19,7 @@ conventions, then act on `$ARGUMENTS`:
   with `done: <item line>` or `drop: <item line>` as the subject (without
   the URLs, keep the refs). If several items match, ask.
 - **Anything else**: a new item.
-  - Write it in the item format, with its theme. Turn issue and PR numbers
+  - Write it in the item format (`- [ ] <Theme>: ...`), with its theme. Turn issue and PR numbers
     into full URLs (`#N` and bare numbers are scikit-learn/scikit-learn
     unless the text says otherwise), and check their titles with
     `gh issue view` when it helps the context.

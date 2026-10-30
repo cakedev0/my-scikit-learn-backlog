@@ -71,7 +71,7 @@ the bug backlog into the list.
 ## Item format
 
 ```
-- <Theme>: <action>, [<ref>](<url>) (<few words of context>) → [notes](todo/<slug>.md)
+- [ ] <Theme>: <action>, [<ref>](<url>) (<few words of context>) → [notes](todo/<slug>.md)
 ```
 
 - **Theme**, one of: HGB, KMeans, Trees, Linear, Encoders, Preprocessing,
@@ -98,7 +98,11 @@ appends new items at the end of their section and never reorders the rest.
 
 ## Removing items: done and drop
 
-Items are removed, never ticked. The commit message keeps the record:
+I mark an item done by ticking its box (`- [x]`), in an editor or with the
+pencil on GitHub (GitHub doesn't make checkboxes clickable in files). I drop
+one by deleting its line. Ticked items stay until the next sync, which
+removes them. The list itself only holds open items; the commit messages
+keep the record:
 
 - `add: <item>`: a new item.
 - `done: <item>`: finished (a PR merged, a reply posted, an idea tried).
@@ -130,6 +134,13 @@ when the ball is in my court (`waiting_since`).
 
 Apply these rules:
 
+0. **My edits since the last sync**, in the working tree or in commits
+   without `add:` / `done:` / `drop:` / `todo:` lines (e.g. "Update TODO.md"
+   from the GitHub editor):
+   - Ticked items (`- [x]`, in `TODO.md` or `todo/stale.md`): remove them
+     and their detail file, as `done:`.
+   - Deleted lines: record them as `drop:` (they are already gone).
+   - New lines: record them as `add:`, and fix their format if needed.
 1. **Tracked threads**:
    - All the threads of an item are `closed`: remove the item as `done:`
      (as `drop:` if my PR was closed without merging; say so in the report).

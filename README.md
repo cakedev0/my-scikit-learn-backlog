@@ -18,9 +18,10 @@ candidate that I read, re-run and decide on before opening anything.
   the backlog, including the priority / difficulty / decision scales and my
   calibration examples.
 - `bug-hunting/TEMPLATE.md`: the template each backlog file follows.
-- `TODO.md`: my work todo list, one line per item, in sections Inbox / Now /
-  Reviews / Waiting / Later. Done and abandoned items are removed, and the
-  commit message records why (`done:`, `drop:`), so git keeps the history.
+- `TODO.md`: my work todo list, one checkbox per item, in sections Inbox /
+  Now / Reviews / Waiting / Later. I tick what's done and delete what I drop;
+  `/todo-sync` removes the ticked items and records both in the commit
+  message (`done:`, `drop:`), so git keeps the history.
 - `todo/`: a detail file per item when one line isn't enough, and
   `todo/INSTRUCTIONS.md`, the rules for keeping the list (format, sections,
   commit conventions, how a sync decides what to add).
