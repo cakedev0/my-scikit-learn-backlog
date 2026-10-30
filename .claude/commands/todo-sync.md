@@ -53,8 +53,8 @@ the solver choice").
 ## 3. Edit
 
 Apply the rules of the "Syncing from GitHub" section of the instructions to
-`TODO.md` and `todo/stale.md`: remove the ticked items, close done items,
-move items between sections, add the new threads, sort the Inbox. Keep the existing lines and
+`TODO.md`: remove the ticked items, close done items, move items between
+sections, add the new threads, sort the Inbox. Keep the existing lines and
 their order unless a rule says otherwise.
 
 ## 4. Commit and report

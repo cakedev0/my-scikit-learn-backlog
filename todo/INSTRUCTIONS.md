@@ -18,8 +18,7 @@ of the job, not side work, and they get the same care as my own PRs:
 
 - **Reviews I requested myself** (`self-requested` in the sync, often on old
   PRs I picked while cleaning up a backlog) are commitments I chose. They go
-  in `Reviews`, above the requests from others unless I reorder them, and
-  never in `todo/stale.md` because the PR is old.
+  in `Reviews`, above the requests from others unless I reorder them.
 - **Threads I reactivated** (an old issue or PR where I just commented) are
   live again: how long they've waited counts from the last event that put
   the ball in my court (`waiting_since`), never from the thread's creation.
@@ -60,9 +59,6 @@ the projects around it (skore, personal repos, old school projects).
 - `todo/<slug>.md`: optional details for one item: context, notes, plan,
   dated log. Free-form, starting with a `# Title`. The item's line links to
   it, and the file is deleted in the same commit as its item.
-- `todo/stale.md`: threads where the ball has been in my court for more than
-  three weeks (`waiting_since`). It has one item in `Now`, so I review them in one sitting:
-  each one either moves to `TODO.md` or gets dropped.
 
 A bug of the backlog (`issues/`) only becomes an item when I decide to act
 on it, and its line links to the `issues/` file as its details. Don't copy
@@ -92,6 +88,11 @@ the bug backlog into the list.
 - One item can link several threads when they are one piece of work (a PR,
   the issue it fixes and its benchmark PR). Its first link is the main one.
 - Keep it to one line. Anything longer goes to a detail file.
+- One concrete action that can be ticked when done. No meta items ("go
+  through the old threads", "triage the backlog"): list the actions
+  themselves. Several threads can share an item only when one action covers
+  them (answering the same question in each, closing a group of
+  experiments).
 
 Order inside a section is priority, highest first. I reorder by hand; a sync
 appends new items at the end of their section and never reorders the rest.
@@ -140,7 +141,7 @@ Apply these rules:
    without `add:` / `done:` / `drop:` / `todo:` lines (e.g. "Update TODO.md"
    from the GitHub editor):
    - Ticked items (`- [x]` or `- [X]`, maybe wrapped in `~~` or followed by
-     a `[date]` by an editor extension, in `TODO.md` or `todo/stale.md`):
+     a `[date]` by an editor extension):
      remove them and their detail file, as `done:`.
    - Deleted lines: record them as `drop:` (they are already gone).
    - New lines: record them as `add:`, and fix their format if needed.
@@ -150,8 +151,8 @@ Apply these rules:
    - Move an item between `Now`, `Reviews` and `Waiting` when the move
      changed, and update the "answer X" part. Leave items I wrote by hand
      where they are unless their thread clearly changed state.
-   - A `Now` item whose `waiting_since` is more than three weeks old goes
-     to `todo/stale.md`. Self-requested reviews never do.
+   - When an item's `waiting_since` gets more than three weeks old, add
+     "since <date>" to its context, so I see what has waited too long.
 2. **New threads** (not tracked):
    - Add, in `Now`: my PRs with a review or a comment from someone else
      since my last activity, red CI or conflicts on my upstream PRs, my
@@ -171,8 +172,10 @@ Apply these rules:
    - Fork PRs (`fork#N`) and benchmark comparison PRs are experiments: put
      them on the `Later` line of their theme (create it if needed), not in
      `Now`, whatever their CI says.
-   - A thread whose `waiting_since` is more than three weeks old goes to
-     `todo/stale.md` rather than `Now`, except self-requested reviews.
+   - An old thread where the ball is in my court is a normal item, with
+     "since <waiting_since>" in its context. When it isn't worth doing soon
+     (an old RFC, a PR to revive), put it in `Later`, with "follow up on" or
+     "revive or close" as its action.
 3. **Removed threads** (`removed` is set: the thread was on the list before
    and I removed it): don't add it back. If there was new activity that
    needs me after the removal date (a review request, a mention, a review on
