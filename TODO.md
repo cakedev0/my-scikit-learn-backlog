@@ -16,7 +16,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Threads: answer lesteve on [sklearn#35105](https://github.com/scikit-learn/scikit-learn/issues/35105) (RFC deprecate `pre_dispatch`)
 - [ ] Benchmarks: answer Vika-F and david-cortes-intel on [benchmarks#129](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/129) (sklearnex TBB threads not limited under joblib; since 2026-10-08)
 - [ ] Benchmarks: tell david-cortes-intel whether the OMP runtime issue still happens with the latest conda-forge packages, on [benchmarks#93](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/93) (Anaconda in the envs matrix; since 2026-10-09)
-- [x] GPU: answer virchan on [probabl-ai/scikit-learn-intel-workflow#8](https://github.com/probabl-ai/scikit-learn-intel-workflow/issues/8) (keep the float32 GPU runner?; since 2026-08-22)
 
 ## Reviews
 
@@ -29,10 +28,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] HGB: review [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
 - [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it)
 - [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim, ogrisel and david-cortes-intel commented)
-- [ ] Maintenance: review [sklearn#35259](https://github.com/scikit-learn/scikit-learn/pull/35259) (skip Python 3.15 for Pyodide wheels; mentioned)
 - [ ] Maintenance: re-review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 says my requested changes are addressed)
-- [ ] Linear: follow up on [sklearn#32991](https://github.com/scikit-learn/scikit-learn/pull/32991): close it (lorentzenchr suggests it) or review betatim's refresh [sklearn#35247](https://github.com/scikit-learn/scikit-learn/pull/35247) (global_random_seed in the coordinate descent tests)
-- [ ] Trees: answer adrinjalali's mention on [sklearn#34558](https://github.com/scikit-learn/scikit-learn/pull/34558) (harden tree loading against corrupted files; since 2026-09-18)
 
 ## Waiting
 
@@ -46,10 +42,10 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Benchmarks: [benchmarks#141](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/141) (Pareto fronts of XGBoost, LightGBM and CatBoost vs HGB; ogrisel commented)
 - [ ] Blog: [blog#228](https://github.com/scikit-learn/blog/pull/228) (benchmarks progress post; approved by DeaMariaLeon) and [blog#231](https://github.com/scikit-learn/blog/pull/231) (match Substack's font size)
 - [ ] Threads: findings reported to scikit-learn, waiting on decisions: [sklearn#35091](https://github.com/scikit-learn/scikit-learn/issues/35091) (lock contention with free-threading), [sklearn#34764](https://github.com/scikit-learn/scikit-learn/issues/34764) (OpenMP active wait), [sklearn#34736](https://github.com/scikit-learn/scikit-learn/issues/34736) (oversubscription in `pairwise_distances`), [sklearn#34437](https://github.com/scikit-learn/scikit-learn/issues/34437) (PyPI wheel bundles the wrong libgomp)
-- [ ] Maintenance: follow up on [sklearn#34673](https://github.com/scikit-learn/scikit-learn/issues/34673) (regression, zero `sample_weight` in IsolationForest and Bagging, attracting automated PRs; asked antoinebaker to fix it)
 - [ ] Maintenance: follow up on [sklearn#34994](https://github.com/scikit-learn/scikit-learn/pull/34994) (random projections `get_feature_names_out`; approved, waiting for the author to mark it ready)
 - [ ] Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - [ ] Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
+- [ ] Linear: follow up on [sklearn#35247](https://github.com/scikit-learn/scikit-learn/pull/35247) (betatim's refresh of the global_random_seed coordinate descent tests): is it worth doing? I closed [sklearn#32991](https://github.com/scikit-learn/scikit-learn/pull/32991) to discuss it there
 
 ## Later
 
