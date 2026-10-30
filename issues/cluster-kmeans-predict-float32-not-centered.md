@@ -16,7 +16,7 @@
 
 - **Priority (3)**: silent wrong predictions that look plausible. It needs float32 input whose offset from the origin is large compared to the cluster spread (~1e3-1e4), but common data sits there: float32 GPS coordinates within a city give 34% of the training samples a wrong `predict` label and 4x the inertia on 1.7.2 (see below). Casting to float64 is a cheap workaround once you know. Maintainer calibration, 2026-10-26.
 - **Difficulty (2)**: centering in `predict`/`score` is a few lines, but it is shared by `_labels_inertia` callers in `KMeans`, `MiniBatchKMeans` and `BisectingKMeans`, and sparse input cannot be centered the same way.
-- **Decision (1)**: `perf-low`: centering a dense `X` in `predict` naively needs a copy (or a float64 path for float32), but centering each chunk inside the Lloyd kernel avoids it (see the fix below); its cost (one extra pass over an in-cache tile) is not measured yet. `float-order`: labels change at the level of rounding for well-conditioned data.
+- **Decision (1)**: `perf-low`: centering a dense `X` in `predict` naively needs a copy (or a float64 path for float32), but centering each chunk inside the Lloyd kernel avoids it (see the fix below). Measured on a prototype (2026-10-28, `kmeans_learnings/experiments.md` E42): the E-step is unchanged for n_features <= 32 and up to ~20% slower at 1 thread and ~30% slower at 16 threads (intel-laptop) on wide data (d = 180, 1000), still much cheaper than copying X. `float-order`: labels change at the level of rounding for well-conditioned data.
 
 ## Upstream search
 
@@ -89,6 +89,8 @@ inertia_:   14724.3525390625
 ```
 
 ## Root cause and possible fix
+
+Fix opened on the fork: cakedev0/scikit-learn#41 (2026-10-28), the per-chunk `shift` option below.
 
 - `sklearn/cluster/_kmeans.py:1474`: `fit` centers dense `X` (and the init) with `X -= X_mean`.
 - `sklearn/cluster/_kmeans.py:1090` (`predict`) and `:1175` (`score`) call `_labels_inertia_threadpool_limit` on uncentered `X`.
