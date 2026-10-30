@@ -73,6 +73,6 @@ Don't push.
 Then report in the terminal, short:
 
 - what changed, per section (`+` added, `-` done, `→` moved);
-- the threads you skipped but weren't sure about, and the removed threads
-  with new activity that needs me (rule 3), as questions;
+- the items added in doubt, and the dropped threads added back (rule 3),
+  so I know which ones to check first;
 - the top of `Now`, as the list stands.

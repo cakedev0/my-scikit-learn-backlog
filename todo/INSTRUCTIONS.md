@@ -168,8 +168,9 @@ comments included) expect a reply or an action from me:
   general call for reviews on a PR I'm not reviewing, a bot.
 
 The item says what is expected ("answer lorentzenchr's concerns on the
-condition number"), not just who posted. In doubt, don't add it: list it in
-the report and ask.
+condition number"), not just who posted. In doubt, add the item: ticking it
+costs me less than answering a question. Don't ask me where an item would
+do.
 
 Apply these rules:
 
@@ -202,7 +203,7 @@ Apply these rules:
    - Skip: threads where I only commented once and the new activity doesn't
      involve me (other users asking to work on an issue, "same here"
      comments, bots), drive-by comments, and anything out of scope (see
-     above). In doubt, skip and list it in the report.
+     above). In doubt whether it involves me, add it.
    - Fork PRs (`fork#N`) and benchmark comparison PRs are experiments: put
      them on the `Later` line of their theme (create it if needed), not in
      `Now`, whatever their CI says.
@@ -218,11 +219,13 @@ Apply these rules:
    - `done` and `back`: a new round (more commits on a PR I reviewed, a
      reply to my answer). Add it again, as for a new thread.
    - `done` without `back`: leave it out.
-   - `drop` or `unknown`: don't add it back. If `back` and the activity
-     needs me (a review request, a mention, a review on my PR), list it in
-     the report and ask.
+   - `drop` or `unknown`: don't add it back, unless `back` and the
+     activity needs me (a review request, a mention, a review on my PR):
+     then add it, saying what came back ("new review request since I
+     dropped it").
 4. **Inbox**: sort each item into its section, with its theme, and the
-   links resolved to full URLs. Ask when the right section isn't clear.
+   links resolved to full URLs. When the section isn't clear, pick the
+   likeliest one.
 
 Then commit everything in one commit: subject `sync: <date>`, body with one
 `add:` / `done:` / `todo:` line per change. Don't push.
