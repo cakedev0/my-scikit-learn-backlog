@@ -93,6 +93,19 @@ the bug backlog into the list.
   themselves. Several threads can share an item only when one action covers
   them (answering the same question in each, closing a group of
   experiments).
+- A bigger piece of work (getting back to a paused topic, a multi-PR
+  project) can be a parent item with sub-items, indented by two spaces:
+
+  ```
+  - [ ] Encoders: go back to the encoders work (paused)
+    - [ ] answer lorentzenchr on [sklearn#34387](<url>) (...)
+    - [ ] resume or close [sklearn#34678](<url>) (...)
+  ```
+
+  The parent says the goal, the sub-items are the concrete actions, without
+  a theme. Ticked sub-items are removed like items; the parent goes when
+  its last sub-item does (or when I tick it, with all its sub-items). A
+  sync adds a new thread of that topic as a sub-item, not as a new item.
 
 Order inside a section is priority, highest first. I reorder by hand; a sync
 appends new items at the end of their section and never reorders the rest.
@@ -140,7 +153,7 @@ Apply these rules:
 0. **My edits since the last sync**, in the working tree or in commits
    without `add:` / `done:` / `drop:` / `todo:` lines (e.g. "Update TODO.md"
    from the GitHub editor):
-   - Ticked items (`- [x]` or `- [X]`, maybe wrapped in `~~` or followed by
+   - Ticked items and sub-items (`- [x]` or `- [X]`, maybe wrapped in `~~` or followed by
      a `[date]` by an editor extension):
      remove them and their detail file, as `done:`.
    - Deleted lines: record them as `drop:` (they are already gone).
