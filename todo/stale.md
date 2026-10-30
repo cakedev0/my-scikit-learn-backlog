@@ -37,6 +37,3 @@ on me for more than three weeks; delete the file once it's empty.
 - Encoders: [sklearn#32161](https://github.com/scikit-learn/scikit-learn/issues/32161) (OrdinalEncoder sorted by decreasing frequency), since 2026-08-18
 - Encoders: ranykamel on [sklearn#34445](https://github.com/scikit-learn/scikit-learn/pull/34445) and [sklearn#11379](https://github.com/scikit-learn/scikit-learn/issues/11379) (mixed-type columns in encoders), since 2026-08-12
 
-## Old review requests
-
-- Maintenance: [sklearn#28681](https://github.com/scikit-learn/scikit-learn/pull/28681) (refactor `_convert_container`), [sklearn#26423](https://github.com/scikit-learn/scikit-learn/pull/26423) (stratified multilabel k-fold), [sklearn#26311](https://github.com/scikit-learn/scikit-learn/pull/26311) (post-fit calibration for HGBT): review, or ask to be removed as reviewer

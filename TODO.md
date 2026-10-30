@@ -10,6 +10,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 ## Now
 
 - Maintenance: go through the threads waiting on me for 3+ weeks → [notes](todo/stale.md)
+- Maintenance: follow up on [sklearn#32728](https://github.com/scikit-learn/scikit-learn/pull/32728): open the PR or the issue to make `_safe_indexing` public, without the underscore, as I offered (ogrisel agrees, lorentzenchr reopened the PR until then)
 - HGB: answer FrancoisPgm on [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164))
 - KMeans: reply to ogrisel's mention in [sklearn#35238](https://github.com/scikit-learn/scikit-learn/issues/35238) (RFC array API KMeans), with his prototype [ogrisel/cursor-sandbox#17](https://github.com/ogrisel/cursor-sandbox/pull/17)
 - Docs: answer ArturoAmorQ on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
@@ -25,24 +26,28 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 ## Reviews
 
-- Threads: [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`, review requested; itamarst and ogrisel replied)
-- Threads: [sklearn#34914](https://github.com/scikit-learn/scikit-learn/pull/34914) (new parallelism API with lower overhead; ogrisel commented)
-- Threads: [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it)
-- Threads: [sklearn#34729](https://github.com/scikit-learn/scikit-learn/pull/34729) (test the thread safety contract of inference methods; waiting on itamarst)
-- Preprocessing: [sklearn#35079](https://github.com/scikit-learn/scikit-learn/pull/35079) (faster `_weighted_percentiles` with several percentiles; antoinebaker mentioned me)
-- HGB: [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
-- HGB: [sklearn#34885](https://github.com/scikit-learn/scikit-learn/pull/34885) (sample_weight zero-weight and integer equivalence; waiting on ogrisel)
-- Trees: [sklearn#35151](https://github.com/scikit-learn/scikit-learn/pull/35151) (warm_start with categorical features in forests, review requested; waiting on adam2392)
-- Trees: [sklearn#34809](https://github.com/scikit-learn/scikit-learn/pull/34809) (export trees as dictionaries, categorical splits; lcrmorin updated it)
-- Linear: [sklearn#35194](https://github.com/scikit-learn/scikit-learn/pull/35194) (per-coefficient positive constraint in Ridge; FrancoisPgm updated it)
-- Linear: [sklearn#35026](https://github.com/scikit-learn/scikit-learn/pull/35026) (normalized BayesianRidge `scores_`; albertcthomas commented)
-- Linear: [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it)
-- Array API: [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim, ogrisel and david-cortes-intel commented)
-- Benchmarks: [benchmarks#142](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/142) (cuML configuration; ogrisel answered my requested changes)
-- Maintenance: [sklearn#35186](https://github.com/scikit-learn/scikit-learn/pull/35186) (faster Euclidean and Manhattan distance metrics; waiting on itamarst)
-- Maintenance: [sklearn#35259](https://github.com/scikit-learn/scikit-learn/pull/35259) (skip Python 3.15 for Pyodide wheels; mentioned)
-- Maintenance: [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 updated it)
-- Docs: [sklearn#34852](https://github.com/scikit-learn/scikit-learn/pull/34852) (example of a custom GroupTimeSeriesSplit, review requested)
+- Maintenance: review [sklearn#28681](https://github.com/scikit-learn/scikit-learn/pull/28681) (refactor `_convert_container`; self-requested 2026-10-28, approved by adrinjalali)
+- Maintenance: review [sklearn#26423](https://github.com/scikit-learn/scikit-learn/pull/26423) (stratified k-fold for multilabel data; self-requested 2026-10-28)
+- HGB: review [sklearn#26311](https://github.com/scikit-learn/scikit-learn/pull/26311) (post-fit calibration for HGBT; self-requested 2026-10-28)
+- Docs: review [sklearn#34852](https://github.com/scikit-learn/scikit-learn/pull/34852) (example of a custom GroupTimeSeriesSplit; self-requested 2026-10-28)
+- Threads: review [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`, review requested; itamarst and ogrisel replied)
+- Threads: review [sklearn#34914](https://github.com/scikit-learn/scikit-learn/pull/34914) (new parallelism API with lower overhead; ogrisel commented)
+- Threads: review [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it)
+- Threads: review [sklearn#34729](https://github.com/scikit-learn/scikit-learn/pull/34729) (test the thread safety contract of inference methods; waiting on itamarst)
+- Preprocessing: review [sklearn#35079](https://github.com/scikit-learn/scikit-learn/pull/35079) (faster `_weighted_percentiles` with several percentiles; antoinebaker mentioned me)
+- HGB: review [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
+- HGB: review [sklearn#34885](https://github.com/scikit-learn/scikit-learn/pull/34885) (sample_weight zero-weight and integer equivalence; waiting on ogrisel)
+- Trees: review [sklearn#35151](https://github.com/scikit-learn/scikit-learn/pull/35151) (warm_start with categorical features in forests, review requested; waiting on adam2392)
+- Trees: review [sklearn#34809](https://github.com/scikit-learn/scikit-learn/pull/34809) (export trees as dictionaries, categorical splits; lcrmorin updated it)
+- Linear: review [sklearn#35194](https://github.com/scikit-learn/scikit-learn/pull/35194) (per-coefficient positive constraint in Ridge; FrancoisPgm updated it)
+- Linear: review [sklearn#35026](https://github.com/scikit-learn/scikit-learn/pull/35026) (normalized BayesianRidge `scores_`; albertcthomas commented)
+- Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it)
+- Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim, ogrisel and david-cortes-intel commented)
+- Benchmarks: review [benchmarks#142](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/142) (cuML configuration; ogrisel answered my requested changes)
+- Maintenance: review [sklearn#35186](https://github.com/scikit-learn/scikit-learn/pull/35186) (faster Euclidean and Manhattan distance metrics; waiting on itamarst)
+- Maintenance: review [sklearn#35259](https://github.com/scikit-learn/scikit-learn/pull/35259) (skip Python 3.15 for Pyodide wheels; mentioned)
+- Maintenance: review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 updated it)
+- Linear: follow up on [sklearn#32991](https://github.com/scikit-learn/scikit-learn/pull/32991): close it (lorentzenchr suggests it) or review betatim's refresh [sklearn#35247](https://github.com/scikit-learn/scikit-learn/pull/35247) (global_random_seed in the coordinate descent tests)
 
 ## Waiting
 
@@ -55,6 +60,8 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - Benchmarks: [benchmarks#141](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/141) (Pareto fronts of XGBoost, LightGBM and CatBoost vs HGB; ogrisel commented)
 - Blog: [blog#228](https://github.com/scikit-learn/blog/pull/228) (benchmarks progress post; approved by DeaMariaLeon) and [blog#231](https://github.com/scikit-learn/blog/pull/231) (match Substack's font size)
 - Threads: findings reported to scikit-learn, waiting on decisions: [sklearn#35091](https://github.com/scikit-learn/scikit-learn/issues/35091) (lock contention with free-threading), [sklearn#34764](https://github.com/scikit-learn/scikit-learn/issues/34764) (OpenMP active wait), [sklearn#34736](https://github.com/scikit-learn/scikit-learn/issues/34736) (oversubscription in `pairwise_distances`), [sklearn#34437](https://github.com/scikit-learn/scikit-learn/issues/34437) (PyPI wheel bundles the wrong libgomp)
+- Maintenance: follow up on [sklearn#34673](https://github.com/scikit-learn/scikit-learn/issues/34673) (regression, zero `sample_weight` in IsolationForest and Bagging, attracting automated PRs; asked antoinebaker to fix it)
+- Maintenance: follow up on [sklearn#34994](https://github.com/scikit-learn/scikit-learn/pull/34994) (random projections `get_feature_names_out`; approved, waiting for the author to mark it ready)
 - Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
 
