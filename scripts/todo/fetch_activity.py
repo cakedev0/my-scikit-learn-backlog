@@ -40,8 +40,14 @@ __typename
   repository { nameWithOwner }
   reviewDecision mergeable
   assignees(first: 10) { nodes { login } }
-  reviewRequests(first: 20) {
-    nodes { requestedReviewer { ... on User { login } } }
+  timelineItems(itemTypes: [REVIEW_REQUESTED_EVENT], last: 10) {
+    nodes {
+      ... on ReviewRequestedEvent {
+        createdAt
+        actor { login }
+        requestedReviewer { ... on User { login } }
+      }
+    }
   }
   comments(last: 30) { nodes { author { __typename login } createdAt body } }
   reviews(last: 30) { nodes { author { __typename login } submittedAt state body } }
@@ -177,6 +183,19 @@ def classify(node, user, roles):
     others_new = [e for e in others if my_last is None or e[0] > my_last]
     others_last = max(others, default=None)
 
+    # The last time a review was requested from me, and by whom.
+    requests = [
+        e
+        for e in (node["timelineItems"]["nodes"] if pr else [])
+        if (e.get("requestedReviewer") or {}).get("login") == user
+    ]
+    request = max(requests, key=lambda e: e["createdAt"], default=None)
+    request_new = (
+        "review-requested" in roles
+        and request is not None
+        and (my_last is None or request["createdAt"] > my_last)
+    )
+
     rollup = None
     if pr and node["commits"]["nodes"]:
         rollup = (node["commits"]["nodes"][0]["commit"]["statusCheckRollup"] or {})
@@ -190,8 +209,9 @@ def classify(node, user, roles):
             reasons.append("ci-failed")
         if pr and mine and node["mergeable"] == "CONFLICTING":
             reasons.append("conflicts")
-        if "review-requested" in roles and others_new:
-            reasons.append("review-requested")
+        if "review-requested" in roles and (others_new or request_new):
+            self_requested = request and (request["actor"] or {}).get("login") == user
+            reasons.append("self-requested" if self_requested else "review-requested")
         if any(f"@{user}".lower() in (body or "").lower() for _, _, body in others_new):
             reasons.append("mentioned")
         if others_new and (mine or my_last is not None):
@@ -200,6 +220,16 @@ def classify(node, user, roles):
         if "assignee" in roles and my_last is None:
             reasons.append("assigned")
         move = "me" if reasons else "them"
+
+    # Since when the ball is in my court: the first event after my last
+    # activity, or after the review request, that put it there. Comments made
+    # before a review request weren't addressed to me. Unknown for a red CI
+    # or conflicts.
+    floor = request["createdAt"] if request_new else my_last
+    waiting = [t for t, _, _ in others_new if floor is None or t > floor]
+    if request_new:
+        waiting.append(request["createdAt"])
+    waiting_since = min(waiting)[:10] if move == "me" and waiting else None
 
     return {
         "url": node["url"],
@@ -215,6 +245,13 @@ def classify(node, user, roles):
         "my_last": (my_last or "")[:10] or None,
         "others_last": (others_last[0][:10] + " " + others_last[1])
         if others_last
+        else None,
+        "waiting_since": waiting_since,
+        "review_requested": {
+            "date": request["createdAt"][:10],
+            "by": (request["actor"] or {}).get("login"),
+        }
+        if request
         else None,
         "review_decision": node.get("reviewDecision"),
         "ci": rollup,
@@ -266,11 +303,14 @@ def main():
     (args.outdir / "threads.json").write_text(json.dumps(threads, indent=1))
 
     print(f"since {since}: {len(threads)} threads, {len(tracked)} tracked")
-    print("tracked\tmove\treasons\tupdated\turl\ttitle")
+    print("tracked\tmove\treasons\twaiting_since\tupdated\turl\ttitle")
     for t in threads:
         flag = "yes" if t["tracked"] else ("removed" if t["removed"] else "no")
         reasons = " ".join(t["reasons"]) or "-"
-        print(f"{flag}\t{t['move']}\t{reasons}\t{t['updated']}\t{t['url']}\t{t['title']}")
+        print(
+            f"{flag}\t{t['move']}\t{reasons}\t{t['waiting_since'] or '-'}"
+            f"\t{t['updated']}\t{t['url']}\t{t['title']}"
+        )
 
 
 if __name__ == "__main__":

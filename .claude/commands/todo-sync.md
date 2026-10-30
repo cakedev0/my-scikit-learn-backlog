@@ -18,9 +18,10 @@ sections and the sync rules. Never write to GitHub.
 /usr/bin/python3 <backlog>/scripts/todo/fetch_activity.py <scratchpad>/todo-sync $ARGUMENTS
 ```
 
-It prints one row per thread (tracked, move, reasons, updated, URL, title)
-and writes the details to `threads.json` (author, roles, last activity of
-me and of others, review decision, CI, removal date). Takes ~1 min.
+It prints one row per thread (tracked, move, reasons, waiting since,
+updated, URL, title) and writes the details to `threads.json` (author,
+roles, last activity of me and of others, who requested my review and when,
+review decision, CI, removal date). Takes ~1 min.
 
 If `git -C <backlog> status --short -- TODO.md todo/` shows uncommitted
 changes, they are mine: keep them, and include them in the sync commit as

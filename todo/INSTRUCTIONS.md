@@ -10,6 +10,35 @@ items come from.
 [announcement]: https://blog.probabl.ai/intel-and-probabl-announce-collaboration-to-accelerate-scikit-learn-on-intel-hardware
 [post]: https://github.com/scikit-learn/blog/pull/228
 
+## Giving back
+
+I open many big PRs on scikit-learn, and each one costs other maintainers
+review time. So reviews, triage and cleaning up old issues and PRs are part
+of the job, not side work, and they get the same care as my own PRs:
+
+- **Reviews I requested myself** (`self-requested` in the sync, often on old
+  PRs I picked while cleaning up a backlog) are commitments I chose. They go
+  in `Reviews`, above the requests from others unless I reorder them, and
+  never in `todo/stale.md` because the PR is old.
+- **Threads I reactivated** (an old issue or PR where I just commented) are
+  live again: how long they've waited counts from the last event that put
+  the ball in my court (`waiting_since`), never from the thread's creation.
+- **Triage follow-ups**: when I triaged a thread, what I wrote decides the
+  item:
+  - I promised something ("I can do that", "I'll review it", "I'll open an
+    issue"): an item in `Now`.
+  - I handed it to someone (asked a maintainer to take it, asked the author
+    to mark the PR ready, suggested closing): an item in `Waiting`, naming
+    who it waits on, until it moves.
+  - I labeled it, or answered and nothing more is expected from me: no item.
+
+Reviews items start with "review" and triage items with "follow up", so
+`done:` lines can be counted, e.g. how much I gave back this month:
+
+```
+git log --grep '^done: [^:]*: review' --since 2026-10-01 --oneline | wc -l
+```
+
 ## It's public
 
 This repo is public. Only write what could be posted on GitHub: public
@@ -32,7 +61,7 @@ the projects around it (skore, personal repos, old school projects).
   dated log. Free-form, starting with a `# Title`. The item's line links to
   it, and the file is deleted in the same commit as its item.
 - `todo/stale.md`: threads where the ball has been in my court for more than
-  three weeks. It has one item in `Now`, so I review them in one sitting:
+  three weeks (`waiting_since`). It has one item in `Now`, so I review them in one sitting:
   each one either moves to `TODO.md` or gets dropped.
 
 A bug of the backlog (`issues/`) only becomes an item when I decide to act
@@ -49,8 +78,9 @@ the bug backlog into the list.
   Threads, Array API, GPU, Docs, Benchmarks, Blog, Upstream (bugs and PRs in
   other projects, e.g. sklearnex, oneDAL, CPython), Maintenance (triage,
   reviews, CI). Add a theme only when none fits.
-- **Action**: start with a verb when there is something to do ("answer
-  lorentzenchr on", "fix the CI of", "upstream or close"). Name who to answer.
+- **Action**: start with a verb ("answer lorentzenchr on", "fix the CI of",
+  "review", "follow up on", "upstream or close"). Name who to answer, or who
+  the item waits on.
 - **Refs**: Markdown links with a short ref as the text: `sklearn#N`
   (scikit-learn/scikit-learn), `benchmarks#N`
   (probabl-ai/scikit-learn-benchmarks), `fork#N` (cakedev0/scikit-learn),
@@ -94,8 +124,9 @@ without my OK.
 `scripts/todo/fetch_activity.py` lists the open threads that involve me
 (cakedev0) since the last `sync:` commit, plus every thread already tracked
 (linked from `TODO.md` or `todo/*.md`), and says whose move it is (`me`,
-`them`, `closed`) and why (`review-requested`, `mentioned`,
-`new-activity:<logins>`, `ci-failed`, `conflicts`, `assigned`).
+`them`, `closed`), why (`self-requested`, `review-requested`, `mentioned`,
+`new-activity:<logins>`, `ci-failed`, `conflicts`, `assigned`), and since
+when the ball is in my court (`waiting_since`).
 
 Apply these rules:
 
@@ -105,15 +136,18 @@ Apply these rules:
    - Move an item between `Now`, `Reviews` and `Waiting` when the move
      changed, and update the "answer X" part. Leave items I wrote by hand
      where they are unless their thread clearly changed state.
-   - A `Now` item whose thread hasn't moved for more than three weeks goes
-     to `todo/stale.md`.
+   - A `Now` item whose `waiting_since` is more than three weeks old goes
+     to `todo/stale.md`. Self-requested reviews never do.
 2. **New threads** (not tracked):
    - Add, in `Now`: my PRs with a review or a comment from someone else
      since my last activity, red CI or conflicts on my upstream PRs, my
      reports with a reply from a maintainer or from the project's
      developers, mentions that ask me something.
-   - Add, in `Reviews`: review requests, and PRs I already reviewed that got
-     new commits or replies.
+   - Add, in `Reviews`: review requests (self-requested ones first), and PRs
+     I already reviewed that got new commits or replies.
+   - Threads I commented on since the last sync without being the author
+     are usually triage: read my last comment and apply the "Triage
+     follow-ups" rules of "Giving back".
    - Add, in `Waiting`: my new upstream PRs and reports that are waiting on
      others.
    - Skip: threads where I only commented once and the new activity doesn't
@@ -123,8 +157,8 @@ Apply these rules:
    - Fork PRs (`fork#N`) and benchmark comparison PRs are experiments: put
      them on the `Later` line of their theme (create it if needed), not in
      `Now`, whatever their CI says.
-   - A thread older than three weeks where the ball is in my court goes to
-     `todo/stale.md` rather than `Now`.
+   - A thread whose `waiting_since` is more than three weeks old goes to
+     `todo/stale.md` rather than `Now`, except self-requested reviews.
 3. **Removed threads** (`removed` is set: the thread was on the list before
    and I removed it): don't add it back. If there was new activity that
    needs me after the removal date (a review request, a mention, a review on
