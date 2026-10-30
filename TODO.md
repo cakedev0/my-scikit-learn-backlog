@@ -10,14 +10,13 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 ## Now
 
 - [ ] Maintenance: follow up on [sklearn#32728](https://github.com/scikit-learn/scikit-learn/pull/32728): open the PR or the issue to make `_safe_indexing` public, without the underscore, as I offered (ogrisel agrees, lorentzenchr reopened the PR until then)
-- [ ] HGB: answer FrancoisPgm on [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164))
-- [ ] Docs: answer ArturoAmorQ on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
-- [ ] Trees: answer adam2392 on [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) (shared X validation and categorical encoding for trees, forests and GB)
-- [ ] Linear: answer lorentzenchr on [sklearn#35196](https://github.com/scikit-learn/scikit-learn/pull/35196) (minimum norm newton-cholesky, alternative to [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339))
+- [ ] Docs: answer ArturoAmorQ's doubt about the "stability across algorithms" wording on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
+- [ ] Trees: answer the questions of adam2392 and antoinebaker on [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) (shared X validation and categorical encoding for trees, forests and GB)
+- [ ] Linear: answer lorentzenchr's inline concerns on [sklearn#35196](https://github.com/scikit-learn/scikit-learn/pull/35196): the Hessian squares the condition number, and is always computing the eigenvalues cheap? (minimum norm newton-cholesky, alternative to [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339))
 - [ ] Threads: answer lesteve on [sklearn#35105](https://github.com/scikit-learn/scikit-learn/issues/35105) (RFC deprecate `pre_dispatch`)
 - [ ] Benchmarks: answer Vika-F and david-cortes-intel on [benchmarks#129](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/129) (sklearnex TBB threads not limited under joblib; since 2026-10-08)
-- [ ] Benchmarks: answer david-cortes-intel on [benchmarks#93](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/93) (Anaconda in the envs matrix, he mentioned me; since 2026-10-09)
-- [ ] GPU: answer virchan on [probabl-ai/scikit-learn-intel-workflow#8](https://github.com/probabl-ai/scikit-learn-intel-workflow/issues/8) (keep the float32 GPU runner?; since 2026-08-22)
+- [ ] Benchmarks: tell david-cortes-intel whether the OMP runtime issue still happens with the latest conda-forge packages, on [benchmarks#93](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/93) (Anaconda in the envs matrix; since 2026-10-09)
+- [x] GPU: answer virchan on [probabl-ai/scikit-learn-intel-workflow#8](https://github.com/probabl-ai/scikit-learn-intel-workflow/issues/8) (keep the float32 GPU runner?; since 2026-08-22)
 
 ## Reviews
 
@@ -25,18 +24,19 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: review [sklearn#26423](https://github.com/scikit-learn/scikit-learn/pull/26423) (stratified k-fold for multilabel data; self-requested 2026-10-28)
 - [ ] HGB: review [sklearn#26311](https://github.com/scikit-learn/scikit-learn/pull/26311) (post-fit calibration for HGBT; self-requested 2026-10-28)
 - [ ] Docs: review [sklearn#34852](https://github.com/scikit-learn/scikit-learn/pull/34852) (example of a custom GroupTimeSeriesSplit; self-requested 2026-10-28)
-- [ ] Threads: review [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`, review requested; itamarst and ogrisel replied)
+- [ ] Threads: review [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`, review requested by itamarst, who has since extended the tests)
 - [ ] Threads: review [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it)
 - [ ] HGB: review [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
 - [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it)
 - [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim, ogrisel and david-cortes-intel commented)
 - [ ] Maintenance: review [sklearn#35259](https://github.com/scikit-learn/scikit-learn/pull/35259) (skip Python 3.15 for Pyodide wheels; mentioned)
-- [ ] Maintenance: review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 updated it)
+- [ ] Maintenance: re-review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 says my requested changes are addressed)
 - [ ] Linear: follow up on [sklearn#32991](https://github.com/scikit-learn/scikit-learn/pull/32991): close it (lorentzenchr suggests it) or review betatim's refresh [sklearn#35247](https://github.com/scikit-learn/scikit-learn/pull/35247) (global_random_seed in the coordinate descent tests)
 - [ ] Trees: answer adrinjalali's mention on [sklearn#34558](https://github.com/scikit-learn/scikit-learn/pull/34558) (harden tree loading against corrupted files; since 2026-09-18)
 
 ## Waiting
 
+- [ ] HGB: get [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) merged (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164); approved by FrancoisPgm, needs a second review)
 - [ ] HGB: get [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935) merged (mitigation heuristics for HGB scalability; approved by ogrisel), dashboards in [benchmarks#81](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/81)
 - [ ] HGB: [sklearn#35182](https://github.com/scikit-learn/scikit-learn/pull/35182) (split early stopping data after binning; draft, ogrisel commented)
 - [ ] KMeans: get [sklearn#35193](https://github.com/scikit-learn/scikit-learn/pull/35193) reviewed (Lloyd thread buffers), benchmarks in [benchmarks#154](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/154) and [benchmarks#160](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/160); with [OpenBLAS#6105](https://github.com/OpenMathLib/OpenBLAS/pull/6105) it should close [sklearn#17334](https://github.com/scikit-learn/scikit-learn/issues/17334)
