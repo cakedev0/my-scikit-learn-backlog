@@ -112,10 +112,13 @@ appends new items at the end of their section and never reorders the rest.
 
 ## Removing items: done and drop
 
-I mark an item done by ticking its box (`- [x]`): in VS Code with the
-Markdown Checkbox extension (Ctrl+Shift+Enter, or the checkbox picker in the
-status bar; `.vscode/settings.json` keeps the line plain), or with the pencil
-on GitHub (GitHub doesn't make checkboxes clickable in files). I drop
+I mark an item done by ticking its box (`- [x]`). In VS Code: click it in
+the Markdown Preview Enhanced preview ("Markdown Preview Enhanced: Open
+Preview to the Side", with `TODO.md` open in an editor; the built-in preview
+only ticks it on screen), or press Ctrl+Shift+Enter on the line (Markdown
+Checkbox extension). `.vscode/settings.json` keeps the line plain and saves
+the file automatically. On GitHub: with the pencil (GitHub doesn't make
+checkboxes clickable in files). I drop
 one by deleting its line. Ticked items stay until the next sync, which
 removes them. The list itself only holds open items; the commit messages
 keep the record:

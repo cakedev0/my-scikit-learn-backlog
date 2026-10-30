@@ -1,3 +1,6 @@
 {
-    "recommendations": ["PKief.markdown-checkbox"]
+    "recommendations": [
+        "PKief.markdown-checkbox",
+        "shd101wyy.markdown-preview-enhanced"
+    ]
 }

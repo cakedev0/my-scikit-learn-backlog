@@ -4,5 +4,8 @@
     "markdown-checkbox.typeOfBulletPoint": "-",
     "markdown-checkbox.checkmark": "x",
     "markdown-checkbox.strikeThroughWhenChecked": false,
-    "markdown-checkbox.dateWhenChecked": false
+    "markdown-checkbox.dateWhenChecked": false,
+    // Ticks clicked in the Markdown Preview Enhanced preview edit the open
+    // TODO.md without saving it: save them, so /todo-sync sees them.
+    "files.autoSave": "afterDelay"
 }
