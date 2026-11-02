@@ -12,8 +12,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Docs: answer ArturoAmorQ's doubt about the "stability across algorithms" wording on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
 - [ ] Linear: answer lorentzenchr's inline concerns on [sklearn#35196](https://github.com/scikit-learn/scikit-learn/pull/35196): the Hessian squares the condition number, and is always computing the eigenvalues cheap? (minimum norm newton-cholesky, alternative to [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339))
 - [ ] Threads: answer lesteve on [sklearn#35105](https://github.com/scikit-learn/scikit-learn/issues/35105) (RFC deprecate `pre_dispatch`)
-- [ ] Benchmarks: answer Vika-F and david-cortes-intel on [benchmarks#129](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/129) (sklearnex TBB threads not limited under joblib; since 2026-10-08)
-- [ ] Benchmarks: tell david-cortes-intel whether the OMP runtime issue still happens with the latest conda-forge packages, on [benchmarks#93](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/93) (Anaconda in the envs matrix; since 2026-10-09)
 - [ ] Blog: address lorentzenchr's review on [blog#228](https://github.com/scikit-learn/blog/pull/228) (shorter TLDR, title, structure, graphs and code snippets) and tell jjerphan which envs use the pthreads and the OpenMP OpenBLAS builds, explicitly on the dashboard (benchmarks progress post; approved by DeaMariaLeon)
 - [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Maintenance: follow up on [sklearn#35209](https://github.com/scikit-learn/scikit-learn/issues/35209): `test_equivalence_of_default_C_and_alpha[newton-cg-True-3]` fails on the macOS x86_64 wheels by 8e-7 relative, virchan suggests relaxing the tolerance
@@ -50,6 +48,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - [ ] Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
 - [ ] Trees: get [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) reviewed (shared X validation and categorical encoding for trees, forests and GB; answered adam2392 and antoinebaker)
+- [ ] Maintenance: get [sklearn#35304](https://github.com/scikit-learn/scikit-learn/pull/35304) merged (replace the deprecated `np.isfortran`, fixes the scipy-dev CI failure [sklearn#35289](https://github.com/scikit-learn/scikit-learn/issues/35289))
 
 ## Later
 
