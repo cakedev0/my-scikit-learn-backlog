@@ -11,11 +11,13 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 - [ ] Maintenance: follow up on [sklearn#32728](https://github.com/scikit-learn/scikit-learn/pull/32728): open the PR or the issue to make `_safe_indexing` public, without the underscore, as I offered (ogrisel agrees, lorentzenchr reopened the PR until then)
 - [ ] Docs: answer ArturoAmorQ's doubt about the "stability across algorithms" wording on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
-- [ ] Trees: answer the questions of adam2392 and antoinebaker on [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) (shared X validation and categorical encoding for trees, forests and GB)
 - [ ] Linear: answer lorentzenchr's inline concerns on [sklearn#35196](https://github.com/scikit-learn/scikit-learn/pull/35196): the Hessian squares the condition number, and is always computing the eigenvalues cheap? (minimum norm newton-cholesky, alternative to [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339))
 - [ ] Threads: answer lesteve on [sklearn#35105](https://github.com/scikit-learn/scikit-learn/issues/35105) (RFC deprecate `pre_dispatch`)
 - [ ] Benchmarks: answer Vika-F and david-cortes-intel on [benchmarks#129](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/129) (sklearnex TBB threads not limited under joblib; since 2026-10-08)
 - [ ] Benchmarks: tell david-cortes-intel whether the OMP runtime issue still happens with the latest conda-forge packages, on [benchmarks#93](https://github.com/probabl-ai/scikit-learn-benchmarks/issues/93) (Anaconda in the envs matrix; since 2026-10-09)
+- [ ] Blog: address lorentzenchr's review on [blog#228](https://github.com/scikit-learn/blog/pull/228) (shorter TLDR, title, structure, graphs and code snippets) and tell jjerphan which envs use the pthreads and the OpenMP OpenBLAS builds, explicitly on the dashboard (benchmarks progress post; approved by DeaMariaLeon)
+- [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
+- [ ] Maintenance: follow up on [sklearn#35209](https://github.com/scikit-learn/scikit-learn/issues/35209): `test_equivalence_of_default_C_and_alpha[newton-cg-True-3]` fails on the macOS x86_64 wheels by 8e-7 relative, virchan suggests relaxing the tolerance
 
 ## Reviews
 
@@ -24,11 +26,13 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] HGB: review [sklearn#26311](https://github.com/scikit-learn/scikit-learn/pull/26311) (post-fit calibration for HGBT; self-requested 2026-10-28)
 - [ ] Docs: review [sklearn#34852](https://github.com/scikit-learn/scikit-learn/pull/34852) (example of a custom GroupTimeSeriesSplit; self-requested 2026-10-28)
 - [ ] Threads: review [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`, review requested by itamarst, who has since extended the tests)
-- [ ] Threads: review [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it)
+- [ ] Threads: review [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it; since 2026-10-05)
 - [ ] HGB: review [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
 - [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it)
-- [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim, ogrisel and david-cortes-intel commented)
+- [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
 - [ ] Maintenance: re-review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 says my requested changes are addressed)
+- [ ] Maintenance: re-review [sklearn#34619](https://github.com/scikit-learn/scikit-learn/pull/34619) (faster `PCA(n_components="mle")`; jberg5 addressed my comments)
+- [ ] Benchmarks: review [benchmarks#142](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/142) (cuML benchmark config, by StefanieSenger) with the results of the AWS L4 run I launched on 2026-11-02
 
 ## Waiting
 
@@ -40,11 +44,11 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Linear: [sklearn#35260](https://github.com/scikit-learn/scikit-learn/pull/35260) (sparse incremental mean and variance in float64)
 - [ ] Linear: [benchmarks#156](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/156) (fit time vs suboptimality, scikit-learn vs glum)
 - [ ] Benchmarks: [benchmarks#141](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/141) (Pareto fronts of XGBoost, LightGBM and CatBoost vs HGB; ogrisel commented)
-- [ ] Blog: [blog#228](https://github.com/scikit-learn/blog/pull/228) (benchmarks progress post; approved by DeaMariaLeon) and [blog#231](https://github.com/scikit-learn/blog/pull/231) (match Substack's font size)
 - [ ] Threads: findings reported to scikit-learn, waiting on decisions: [sklearn#35091](https://github.com/scikit-learn/scikit-learn/issues/35091) (lock contention with free-threading), [sklearn#34764](https://github.com/scikit-learn/scikit-learn/issues/34764) (OpenMP active wait), [sklearn#34736](https://github.com/scikit-learn/scikit-learn/issues/34736) (oversubscription in `pairwise_distances`), [sklearn#34437](https://github.com/scikit-learn/scikit-learn/issues/34437) (PyPI wheel bundles the wrong libgomp)
 - [ ] Maintenance: follow up on [sklearn#34994](https://github.com/scikit-learn/scikit-learn/pull/34994) (random projections `get_feature_names_out`; approved, waiting for the author to mark it ready)
 - [ ] Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - [ ] Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
+- [ ] Trees: get [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) reviewed (shared X validation and categorical encoding for trees, forests and GB; answered adam2392 and antoinebaker)
 
 ## Later
 
@@ -64,7 +68,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
   - [ ] resume or close the pandas categorical fast path [sklearn#34678](https://github.com/scikit-learn/scikit-learn/pull/34678) (every edge case as on main), with [sklearn#34721](https://github.com/scikit-learn/scikit-learn/pull/34721) (narwhals) and [narwhals#3761](https://github.com/narwhals-dev/narwhals/issues/3761) (access categorical codes)
   - [ ] upstream or close [fork#13](https://github.com/cakedev0/scikit-learn/pull/13) and [fork#15](https://github.com/cakedev0/scikit-learn/pull/15) (fast transform of small batches), benchmarks in [benchmarks#76](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/76)
 - [ ] Linear: find the copies of X that can be avoided (slow, single-threaded, double the peak memory)
-- [ ] Linear: upstream or close [fork#21](https://github.com/cakedev0/scikit-learn/pull/21) (F-ordered X for multiclass lbfgs), [fork#37](https://github.com/cakedev0/scikit-learn/pull/37) (newton-cd in `solver="auto"`), [fork#38](https://github.com/cakedev0/scikit-learn/pull/38) (lbfgs on implicitly centered columns, replaces the closed [sklearn#35030](https://github.com/scikit-learn/scikit-learn/pull/35030) for [sklearn#35029](https://github.com/scikit-learn/scikit-learn/issues/35029)), [fork#40](https://github.com/cakedev0/scikit-learn/pull/40) (sparse CD diverges on constant columns)
+- [ ] Linear: upstream or close [fork#21](https://github.com/cakedev0/scikit-learn/pull/21) (F-ordered X for multiclass lbfgs), [fork#37](https://github.com/cakedev0/scikit-learn/pull/37) (newton-cd in `solver="auto"`), [fork#38](https://github.com/cakedev0/scikit-learn/pull/38) (lbfgs on implicitly centered columns, replaces the closed [sklearn#35030](https://github.com/scikit-learn/scikit-learn/pull/35030) for [sklearn#35029](https://github.com/scikit-learn/scikit-learn/issues/35029), where lorentzenchr recalls that `normalize` was removed in favor of a `StandardScaler` pipeline), [fork#40](https://github.com/cakedev0/scikit-learn/pull/40) (sparse CD diverges on constant columns)
 - [ ] Preprocessing: upstream or close [fork#22](https://github.com/cakedev0/scikit-learn/pull/22) and [fork#25](https://github.com/cakedev0/scikit-learn/pull/25) (faster `SplineTransformer.transform`)
 - [ ] Threads: [fork#28](https://github.com/cakedev0/scikit-learn/pull/28) (multi-threaded input validation and preprocessing, WIP)
 - [ ] Upstream: upstream to SciPy or close [cakedev0/scipy#4](https://github.com/cakedev0/scipy/pull/4) (faster weighted `stats.quantile`) and [cakedev0/scipy#5](https://github.com/cakedev0/scipy/pull/5) (faster `_xp_searchsorted`)
@@ -80,3 +84,4 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Trees: upstream or close [fork#4](https://github.com/cakedev0/scikit-learn/pull/4) (GB line search regression)
 - [ ] Array API: upstream or close [fork#3](https://github.com/cakedev0/scikit-learn/pull/3) (`xpx.quantile` instead of `_weighted_percentile`)
 - [ ] Upstream: revive or close [numpy#30066](https://github.com/numpy/numpy/pull/30066) (weighted nanquantile broadcasting; answer seberg)
+- [ ] Upstream: upstream to OpenBLAS or close [cakedev0/OpenBLAS#3](https://github.com/cakedev0/OpenBLAS/pull/3) (fewer threads in threaded syrk instead of one) and [cakedev0/OpenBLAS#4](https://github.com/cakedev0/OpenBLAS/pull/4) (double-precision `SWITCH_RATIO` in `DYNAMIC_ARCH` builds; draft, slows down small squares)
