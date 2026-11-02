@@ -9,7 +9,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 ## Now
 
-- [ ] Maintenance: follow up on [sklearn#32728](https://github.com/scikit-learn/scikit-learn/pull/32728): open the PR or the issue to make `_safe_indexing` public, without the underscore, as I offered (ogrisel agrees, lorentzenchr reopened the PR until then)
 - [ ] Docs: answer ArturoAmorQ's doubt about the "stability across algorithms" wording on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
 - [ ] Linear: answer lorentzenchr's inline concerns on [sklearn#35196](https://github.com/scikit-learn/scikit-learn/pull/35196): the Hessian squares the condition number, and is always computing the eigenvalues cheap? (minimum norm newton-cholesky, alternative to [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339))
 - [ ] Threads: answer lesteve on [sklearn#35105](https://github.com/scikit-learn/scikit-learn/issues/35105) (RFC deprecate `pre_dispatch`)
