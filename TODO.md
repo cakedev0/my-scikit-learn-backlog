@@ -48,6 +48,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - [ ] Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
 - [ ] Trees: get [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) reviewed (shared X validation and categorical encoding for trees, forests and GB; answered adam2392 and antoinebaker)
+- [ ] Maintenance: get [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) reviewed (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439), as agreed on [sklearn#32728](https://github.com/scikit-learn/scikit-learn/pull/32728))
 
 ## Later
 
