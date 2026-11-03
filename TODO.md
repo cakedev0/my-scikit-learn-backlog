@@ -13,7 +13,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Blog: address lorentzenchr's review on [blog#228](https://github.com/scikit-learn/blog/pull/228) (shorter TLDR, title, structure, graphs and code snippets) and tell jjerphan which envs use the pthreads and the OpenMP OpenBLAS builds, explicitly on the dashboard (david-cortes-intel notes the OpenMP build requires LLVM's libomp) (benchmarks progress post; approved by DeaMariaLeon)
 - [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Maintenance: follow up on [sklearn#35209](https://github.com/scikit-learn/scikit-learn/issues/35209): `test_equivalence_of_default_C_and_alpha[newton-cg-True-3]` fails on the macOS x86_64 wheels by 8e-7 relative, virchan suggests relaxing the tolerance
-- [ ] HGB: add the non-regression test lesteve asks for on [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164); approved by FrancoisPgm, milestone 1.10)
 
 ## Reviews
 
@@ -24,12 +23,13 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Threads: review [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`, review requested by itamarst, who has since extended the tests)
 - [ ] Threads: review [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it; since 2026-10-05)
 - [ ] HGB: review [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
-- [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it)
+- [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it, approved by lucyleeow)
 - [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10 and fixed some of what I reported, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
 - [ ] Maintenance: re-review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 says my requested changes are addressed)
 - [ ] Maintenance: re-review [sklearn#34619](https://github.com/scikit-learn/scikit-learn/pull/34619) (faster `PCA(n_components="mle")`; jberg5 addressed my comments)
 - [ ] Benchmarks: review [benchmarks#142](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/142) (cuML benchmark config, by StefanieSenger) with the results of the AWS L4 run I launched on 2026-11-02
 - [ ] Maintenance: re-review [sklearn#35261](https://github.com/scikit-learn/scikit-learn/pull/35261) (1.10 deprecations in MDS; FrancoisPgm addressed my comments)
+- [ ] Threads: review [sklearn#34729](https://github.com/scikit-learn/scikit-learn/pull/34729) (test that inference methods don't modify the estimator, review requested by itamarst; ev-br says the `SplineTransformer` mutation comes from SciPy's `BSpline` copies)
 
 ## Waiting
 
@@ -48,6 +48,8 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Upstream: dpnp reports [IntelPython/dpnp#3149](https://github.com/IntelPython/dpnp/issues/3149) (`X @ w` up to 18x slower on C-contiguous tall matrices; ndgrigorian reproduced it, MKL `gemv` vs `gemm`) and [IntelPython/dpnp#3148](https://github.com/IntelPython/dpnp/issues/3148) (Python scalar operands synchronize the queue)
 - [ ] Maintenance: get [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) reviewed (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439); lorentzenchr's review addressed, alias deprecated in 1.14)
 - [ ] Docs: get [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) reviewed (Consensus Index TODO in the clustering guide; wording changed as ArturoAmorQ suggested)
+- [ ] HGB: get [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) merged (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164); approved by FrancoisPgm and lesteve, auto-merge enabled)
+- [ ] Trees: get [sklearn#34554](https://github.com/scikit-learn/scikit-learn/pull/34554) merged (`NotImplementedError` for recursion PDP on categorical features; approved, AnneBeyer asked adam2392 to merge)
 
 ## Later
 
