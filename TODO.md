@@ -16,6 +16,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Maintenance: follow up on [sklearn#35209](https://github.com/scikit-learn/scikit-learn/issues/35209): `test_equivalence_of_default_C_and_alpha[newton-cg-True-3]` fails on the macOS x86_64 wheels by 8e-7 relative, virchan suggests relaxing the tolerance
 - [ ] Maintenance: address lorentzenchr's review on [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295): say that the `_safe_indexing` alias will be removed (1.14?), and whether `doc/conf.py` needs the change (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439))
+- [ ] HGB: add the non-regression test lesteve asks for on [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164); approved by FrancoisPgm, milestone 1.10)
 
 ## Reviews
 
@@ -35,7 +36,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 ## Waiting
 
-- [ ] HGB: get [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) merged (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164); approved by FrancoisPgm, needs a second review)
 - [ ] HGB: get [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935) merged (mitigation heuristics for HGB scalability; approved by ogrisel, who asked jjerphan for a second review), dashboards in [benchmarks#81](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/81)
 - [ ] HGB: [sklearn#35182](https://github.com/scikit-learn/scikit-learn/pull/35182) (split early stopping data after binning; draft, ogrisel commented)
 - [ ] KMeans: get [sklearn#35193](https://github.com/scikit-learn/scikit-learn/pull/35193) reviewed (Lloyd thread buffers), benchmarks in [benchmarks#154](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/154) and [benchmarks#160](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/160); with [OpenBLAS#6105](https://github.com/OpenMathLib/OpenBLAS/pull/6105) it should close [sklearn#17334](https://github.com/scikit-learn/scikit-learn/issues/17334)
@@ -48,7 +48,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Upstream: sklearnex reports [sklearnex#3402](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3402) (`estimators_` rebuilds every tree), [sklearnex#3377](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3377) (CPU Ridge up to 55x slower when n_features > n_samples), [sklearnex#3220](https://github.com/uxlfoundation/scikit-learn-intelex/issues/3220) (LogisticRegression GPU fallback)
 - [ ] Upstream: [data-apis/array-api#976](https://github.com/data-apis/array-api/issues/976) (why `stable=True` is the default for `xp.sort`)
 - [ ] Trees: get [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) reviewed (shared X validation and categorical encoding for trees, forests and GB; answered adam2392 and antoinebaker)
-- [ ] Maintenance: get [sklearn#35304](https://github.com/scikit-learn/scikit-learn/pull/35304) merged (replace the deprecated `np.isfortran`, fixes the scipy-dev CI failure [sklearn#35289](https://github.com/scikit-learn/scikit-learn/issues/35289))
+- [ ] Upstream: dpnp reports [IntelPython/dpnp#3149](https://github.com/IntelPython/dpnp/issues/3149) (`X @ w` up to 18x slower on C-contiguous tall matrices; ndgrigorian reproduced it, MKL `gemv` vs `gemm`) and [IntelPython/dpnp#3148](https://github.com/IntelPython/dpnp/issues/3148) (Python scalar operands synchronize the queue)
 
 ## Later
 
