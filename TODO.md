@@ -15,7 +15,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: re-review [sklearn#35261](https://github.com/scikit-learn/scikit-learn/pull/35261) (1.10 deprecations in MDS; FrancoisPgm addressed my comments)
 - [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10 and fixed some of what I reported, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
 
-
 ## Reviews
 
 - [ ] Maintenance: review [sklearn#28681](https://github.com/scikit-learn/scikit-learn/pull/28681) (refactor `_convert_container`; self-requested 2026-10-28, approved by adrinjalali)
@@ -41,7 +40,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: follow up on [sklearn#34994](https://github.com/scikit-learn/scikit-learn/pull/34994) (random projections `get_feature_names_out`; approved, waiting for the author to mark it ready)
 - [ ] Maintenance: get [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) reviewed (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439); lorentzenchr's review addressed, alias deprecated in 1.14)
 - [ ] Docs: get [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) reviewed (Consensus Index TODO in the clustering guide; wording changed as ArturoAmorQ suggested)
-- [ ] Trees: get [sklearn#34554](https://github.com/scikit-learn/scikit-learn/pull/34554) merged (`NotImplementedError` for recursion PDP on categorical features; approved, AnneBeyer asked adam2392 to merge)
 
 ## Later
 
