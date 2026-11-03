@@ -9,10 +9,8 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 ## Now
 
-- [ ] Docs: answer ArturoAmorQ's doubt about the "stability across algorithms" wording on [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) (Consensus Index TODO in the clustering guide)
-- [ ] Linear: answer lorentzenchr's inline concerns on [sklearn#35196](https://github.com/scikit-learn/scikit-learn/pull/35196): the Hessian squares the condition number, and is always computing the eigenvalues cheap? (minimum norm newton-cholesky, alternative to [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339))
 - [ ] Threads: answer lesteve on [sklearn#35105](https://github.com/scikit-learn/scikit-learn/issues/35105) (RFC deprecate `pre_dispatch`)
-- [ ] Blog: address lorentzenchr's review on [blog#228](https://github.com/scikit-learn/blog/pull/228) (shorter TLDR, title, structure, graphs and code snippets) and tell jjerphan which envs use the pthreads and the OpenMP OpenBLAS builds, explicitly on the dashboard (benchmarks progress post; approved by DeaMariaLeon)
+- [ ] Blog: address lorentzenchr's review on [blog#228](https://github.com/scikit-learn/blog/pull/228) (shorter TLDR, title, structure, graphs and code snippets) and tell jjerphan which envs use the pthreads and the OpenMP OpenBLAS builds, explicitly on the dashboard (david-cortes-intel notes the OpenMP build requires LLVM's libomp) (benchmarks progress post; approved by DeaMariaLeon)
 - [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Maintenance: follow up on [sklearn#35209](https://github.com/scikit-learn/scikit-learn/issues/35209): `test_equivalence_of_default_C_and_alpha[newton-cg-True-3]` fails on the macOS x86_64 wheels by 8e-7 relative, virchan suggests relaxing the tolerance
 - [ ] HGB: add the non-regression test lesteve asks for on [sklearn#35216](https://github.com/scikit-learn/scikit-learn/pull/35216) (binning crash on all-missing features, fixes [sklearn#35164](https://github.com/scikit-learn/scikit-learn/issues/35164); approved by FrancoisPgm, milestone 1.10)
@@ -49,6 +47,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Trees: get [sklearn#35181](https://github.com/scikit-learn/scikit-learn/pull/35181) reviewed (shared X validation and categorical encoding for trees, forests and GB; answered adam2392 and antoinebaker)
 - [ ] Upstream: dpnp reports [IntelPython/dpnp#3149](https://github.com/IntelPython/dpnp/issues/3149) (`X @ w` up to 18x slower on C-contiguous tall matrices; ndgrigorian reproduced it, MKL `gemv` vs `gemm`) and [IntelPython/dpnp#3148](https://github.com/IntelPython/dpnp/issues/3148) (Python scalar operands synchronize the queue)
 - [ ] Maintenance: get [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) reviewed (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439); lorentzenchr's review addressed, alias deprecated in 1.14)
+- [ ] Docs: get [sklearn#35267](https://github.com/scikit-learn/scikit-learn/pull/35267) reviewed (Consensus Index TODO in the clustering guide; wording changed as ArturoAmorQ suggested)
 
 ## Later
 
