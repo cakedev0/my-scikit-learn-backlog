@@ -26,6 +26,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it, approved by lucyleeow)
 - [ ] Maintenance: re-review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 says my requested changes are addressed)
 - [ ] Maintenance: re-review [sklearn#34619](https://github.com/scikit-learn/scikit-learn/pull/34619) (faster `PCA(n_components="mle")`; jberg5 addressed my comments)
+- [ ] Preprocessing: take over or review [sklearn#32806](https://github.com/scikit-learn/scikit-learn/pull/32806) (polars support in `make_column_selector`, maybe through narwhals as DeaMariaLeon suggested; AsherWright silent since my ping of 2026-10-05)
 
 ## Waiting
 
