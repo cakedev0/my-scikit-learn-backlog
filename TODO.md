@@ -14,7 +14,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Maintenance: re-review [sklearn#35261](https://github.com/scikit-learn/scikit-learn/pull/35261) (1.10 deprecations in MDS; FrancoisPgm addressed my comments)
 - [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10 and fixed some of what I reported, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
-- [ ] Maintenance: resolve the conflicts on [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) and drop the `doc/conf.py` change, as lorentzenchr prefers (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439))
 - [ ] Linear: open an issue for sparse coordinate descent diverging on constant columns, as lorentzenchr asks on [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339) (fix in [fork#40](https://github.com/cakedev0/scikit-learn/pull/40); he will xfail the tests in his PR)
 
 ## Reviews
@@ -25,7 +24,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Docs: review [sklearn#34852](https://github.com/scikit-learn/scikit-learn/pull/34852) (example of a custom GroupTimeSeriesSplit; self-requested 2026-10-28)
 - [ ] Threads: review [sklearn#35062](https://github.com/scikit-learn/scikit-learn/pull/35062) (don't assume the CPU count never changes; itamarst updated it; since 2026-10-05)
 - [ ] HGB: review [sklearn#34398](https://github.com/scikit-learn/scikit-learn/pull/34398) (Huber loss for HGB; mentioned by lorentzenchr)
-- [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; lorentzenchr updated it, approved by lucyleeow)
+- [ ] Linear: review [sklearn#35215](https://github.com/scikit-learn/scikit-learn/pull/35215) (user guide on linear models, intro and OLS; approved by lucyleeow, who merges it after a last rewording)
 - [ ] Maintenance: re-review [sklearn#35133](https://github.com/scikit-learn/scikit-learn/pull/35133) (explicit zeros in sparse DictVectorizer output; LJimmy007 says my requested changes are addressed)
 - [ ] Maintenance: re-review [sklearn#34619](https://github.com/scikit-learn/scikit-learn/pull/34619) (faster `PCA(n_components="mle")`; jberg5 addressed my comments)
 - [ ] Preprocessing: take over or review [sklearn#32806](https://github.com/scikit-learn/scikit-learn/pull/32806) (polars support in `make_column_selector`, maybe through narwhals as DeaMariaLeon suggested; AsherWright silent since my ping of 2026-10-05)
@@ -42,6 +41,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Threads: findings reported to scikit-learn, waiting on decisions: [sklearn#35091](https://github.com/scikit-learn/scikit-learn/issues/35091) (lock contention with free-threading), [sklearn#34764](https://github.com/scikit-learn/scikit-learn/issues/34764) (OpenMP active wait), [sklearn#34437](https://github.com/scikit-learn/scikit-learn/issues/34437) (PyPI wheel bundles the wrong libgomp)
 - [ ] Maintenance: follow up on [sklearn#34994](https://github.com/scikit-learn/scikit-learn/pull/34994) (random projections `get_feature_names_out`; approved, waiting for the author to mark it ready)
 - [ ] KMeans: get [sklearn#35311](https://github.com/scikit-learn/scikit-learn/pull/35311) reviewed (tolerance without `np.var` on dense data, from [fork#39](https://github.com/cakedev0/scikit-learn/pull/39); cc ogrisel and betatim)
+- [ ] Maintenance: get [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) merged (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439); conflicts resolved and `doc/conf.py` change dropped, approved by lorentzenchr)
 
 ## Later
 
@@ -78,3 +78,5 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Array API: upstream or close [fork#3](https://github.com/cakedev0/scikit-learn/pull/3) (`xpx.quantile` instead of `_weighted_percentile`)
 - [ ] Upstream: revive or close [numpy#30066](https://github.com/numpy/numpy/pull/30066) (weighted nanquantile broadcasting; answer seberg)
 - [ ] Upstream: upstream to OpenBLAS or close [cakedev0/OpenBLAS#3](https://github.com/cakedev0/OpenBLAS/pull/3) (fewer threads in threaded syrk instead of one) and [cakedev0/OpenBLAS#4](https://github.com/cakedev0/OpenBLAS/pull/4) (double-precision `SWITCH_RATIO` in `DYNAMIC_ARCH` builds; draft, slows down small squares)
+- [ ] Upstream: report [cakedev0/cython#1](https://github.com/cakedev0/cython/issues/1) to Cython (`prange` in a nogil `parallel()` block lost its end barrier in 3.3, code after the loop races), and check scikit-learn's `prange` blocks
+- [ ] Upstream: work on or report to OpenBLAS the LAPACK gaps with MKL: [cakedev0/OpenBLAS#5](https://github.com/cakedev0/OpenBLAS/issues/5) (tall `dgeqrf`, 7-15x), [cakedev0/OpenBLAS#6](https://github.com/cakedev0/OpenBLAS/issues/6) (`dpotrf`, ~3x), [cakedev0/OpenBLAS#7](https://github.com/cakedev0/OpenBLAS/issues/7) (`dsyevd`, ~2.3x)
