@@ -17,7 +17,7 @@ conventions, then act on `$ARGUMENTS`:
 - **`done <item>` or `drop <item>`**: find the item (by words or by a
   thread number), remove its line and its detail file if any, and commit
   with `done: <item line>` or `drop: <item line>` as the subject (without
-  the URLs, keep the refs). If several items match, ask.
+  the URLs, keep the short refs; see "Commits" in the instructions). If several items match, ask.
 - **Anything else**: a new item.
   - Write it in the item format (`- [ ] <Theme>: ...`), with its theme. Turn issue and PR numbers
     into full URLs (`#N` and bare numbers are scikit-learn/scikit-learn
@@ -26,7 +26,7 @@ conventions, then act on `$ARGUMENTS`:
   - Put it in the section it obviously belongs to, otherwise in `Inbox`.
   - When I give more than fits on a line (a plan, a list of steps, links),
     put the rest in a new `todo/<slug>.md` and link it.
-  - Commit with `add: <item line>` as the subject.
+  - Commit with `add: <item line>` as the subject, without the URLs.
 
 Commit only `TODO.md` and `todo/`, and don't push. Reply in one or two
 lines: the item as written and the section.

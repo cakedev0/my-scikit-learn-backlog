@@ -126,8 +126,9 @@ keep the record:
 
 - `add: <item>`: a new item.
 - `done: <item>`: finished (a PR merged, a reply posted, an idea tried).
-  Keep the refs of the item (`sklearn#N`): the sync matches them to know a
-  thread was done, not dropped.
+  Keep the refs of the item (`sklearn#N`), without their URLs (see
+  "Commits"): the sync matches them to know a thread was done, not
+  dropped.
 - `drop: <item>`: abandoned for now, may come back one day.
 - `todo: <what>`: anything else (rewording, moving, reordering).
 
@@ -234,3 +235,11 @@ Then commit everything in one commit: subject `sync: <date>`, body with one
 
 Commit each change to the list (a sync, a quick add, a done), but don't push:
 I push myself. Commit only `TODO.md` and `todo/` in these commits.
+
+Commit messages never link to an issue or a PR: once pushed, GitHub adds a
+"referenced this" event on the thread, which is noise for the people there.
+Write the refs as plain text that GitHub doesn't link: the short refs of
+the item format with their prefix (`sklearn#N`, `fork#N`, `benchmarks#N`,
+`dpnp#N`), never a URL, a bare `#N` or `owner/repo#N` (drop the owner:
+`cakedev0/OpenBLAS#3` becomes `OpenBLAS#3`). The sync only needs the
+number after `#` to match a thread.

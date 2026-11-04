@@ -68,7 +68,8 @@ their order unless a rule says otherwise.
 
 Commit `TODO.md` and `todo/` only, in one commit: subject
 `sync: <today>`, body with one `add:` / `done:` / `todo:` line per change.
-Don't push.
+Refs as plain short refs (`sklearn#N`), no URLs and no `owner/repo#N`:
+see "Commits" in the instructions. Don't push.
 
 Then report in the terminal, short:
 
