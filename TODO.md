@@ -10,10 +10,9 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 ## Now
 
 - [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10 and fixed some of what I reported, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
-- [ ] HGB: resolve the conflicts on [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935) and find a second reviewer, jjerphan has no time (mitigation heuristics for HGB scalability; approved by ogrisel), dashboards in [benchmarks#81](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/81)
+- [ ] HGB: find a second reviewer for [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935), jjerphan has no time (mitigation heuristics for HGB scalability; approved by ogrisel, conflicts resolved), dashboards in [benchmarks#81](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/81)
 - [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Linear: answer lorentzenchr on [sklearn#35317](https://github.com/scikit-learn/scikit-learn/issues/35317) (sparse CD wrong on constant columns without penalty; he reproduces it, doubts it needs a fix since it's rare, and suggests a simple one: only check the columns with no implicit zeros), from [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339)
-- [ ] GPU: run the float32 Intel CI on [sklearn#35319](https://github.com/scikit-learn/scikit-learn/pull/35319), as virchan asks (`_atol_for_type` returns a Python `float`; approved by betatim)
 
 ## Reviews
 
@@ -27,7 +26,6 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Maintenance: re-review [sklearn#34619](https://github.com/scikit-learn/scikit-learn/pull/34619) (faster `PCA(n_components="mle")`; jberg5 addressed my comments)
 - [ ] Preprocessing: take over or review [sklearn#32806](https://github.com/scikit-learn/scikit-learn/pull/32806) (polars support in `make_column_selector`, maybe through narwhals as DeaMariaLeon suggested; AsherWright silent since my ping of 2026-10-05)
 - [ ] Threads: re-review [joblib#1899](https://github.com/joblib/joblib/pull/1899) (faster threading backend for `Parallel`; itamarst now bounds the memory with `ThreadPoolExecutor.map(buffersize=pre_dispatch)`, slow path on Pythons without `buffersize`)
-- [ ] Maintenance: re-review [sklearn#35079](https://github.com/scikit-learn/scikit-learn/pull/35079) (faster `_weighted_percentile` with several percentiles; jeremiedbb addressed my comments and added a changelog entry)
 - [ ] Trees: re-review [sklearn#34809](https://github.com/scikit-learn/scikit-learn/pull/34809) (export decision trees as dictionaries; lcrmorin pushed new commits, with categorical splits)
 - [ ] Maintenance: review [sklearn#35316](https://github.com/scikit-learn/scikit-learn/pull/35316) (deprecate `estimator_name` for `name` in `CalibrationDisplay`; AnneBeyer pinged me and betatim, nice to have in 1.10)
 
@@ -44,6 +42,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] KMeans: get [sklearn#35311](https://github.com/scikit-learn/scikit-learn/pull/35311) merged (tolerance without `np.var` on dense data, from [fork#39](https://github.com/cakedev0/scikit-learn/pull/39); approved by ogrisel)
 - [ ] Maintenance: get [sklearn#35295](https://github.com/scikit-learn/scikit-learn/pull/35295) merged (make `_safe_indexing` public as `safe_indexing`, fixes [sklearn#27439](https://github.com/scikit-learn/scikit-learn/issues/27439); conflicts resolved and `doc/conf.py` change dropped, approved by lorentzenchr)
 - [ ] Maintenance: follow up on [sklearn#35302](https://github.com/scikit-learn/scikit-learn/pull/35302) (ignore the agents' instruction files in `.gitignore`; I asked to add `CLAUDE.md` and `AGENTS.override.md`, lorentzenchr points to `AGENTS.md`, I answered why)
+- [ ] GPU: get [sklearn#35322](https://github.com/scikit-learn/scikit-learn/pull/35322) reviewed (dtype of `y_proba` for the null model in `d2_log_loss_score`; fixes the float32 Intel GPU CI failures seen on [sklearn#35319](https://github.com/scikit-learn/scikit-learn/pull/35319))
 
 ## Later
 
@@ -84,3 +83,4 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Upstream: work on or report to OpenBLAS the LAPACK gaps with MKL: [cakedev0/OpenBLAS#5](https://github.com/cakedev0/OpenBLAS/issues/5) (tall `dgeqrf`, 7-15x), [cakedev0/OpenBLAS#6](https://github.com/cakedev0/OpenBLAS/issues/6) (`dpotrf`, ~3x), [cakedev0/OpenBLAS#7](https://github.com/cakedev0/OpenBLAS/issues/7) (`dsyevd`, ~2.3x); and [cakedev0/OpenBLAS#9](https://github.com/cakedev0/OpenBLAS/issues/9) (pinned threads sometimes share a CPU on the Xeon socket, 10-40x slower calls)
 - [ ] HGB: upstream or close [fork#42](https://github.com/cakedev0/scikit-learn/pull/42) after [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935) (merge the parallel regions of a split)
 - [ ] Array API: rebase or close [betatim/scikit-learn#2](https://github.com/betatim/scikit-learn/pull/2) (convert fitted attributes when the outermost fit returns; conflicts, betatim wants to delay that decision on [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053))
+- [ ] Threads: benchmark scikit-learn workloads with only two OpenBLAS limit levels, as itamarst suggests on [joblib#1937](https://github.com/joblib/joblib/issues/1937) (1 thread or all cores; needs [joblib#1871](https://github.com/joblib/joblib/pull/1871))
