@@ -9,12 +9,11 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 
 ## Now
 
-- [ ] Blog: tell jjerphan on [blog#228](https://github.com/scikit-learn/blog/pull/228) which envs use the pthreads and the OpenMP OpenBLAS builds, explicitly on the dashboard, and answer david-cortes-intel's new suggestions (mkl-service for MKL threads, wording of the free-threading speedup) (lorentzenchr's review addressed, benchmarks progress post)
-- [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 - [ ] Maintenance: re-review [sklearn#35261](https://github.com/scikit-learn/scikit-learn/pull/35261) (1.10 deprecations in MDS; FrancoisPgm addressed my comments, approved by betatim)
-- [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10 and fixed some of what I reported, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
 - [ ] Linear: open an issue for sparse coordinate descent diverging on constant columns, as lorentzenchr asks on [sklearn#34339](https://github.com/scikit-learn/scikit-learn/pull/34339) (fix in [fork#40](https://github.com/cakedev0/scikit-learn/pull/40); he will xfail the tests in his PR)
+- [ ] Array API: review [sklearn#35053](https://github.com/scikit-learn/scikit-learn/pull/35053) (store all fitted attributes as NumPy arrays; betatim asks for reviews for 1.10 and fixed some of what I reported, virchan asks how to fix the `CalibratedClassifierCV` and `cross_val_predict` regressions; since 2026-10-07)
 - [ ] HGB: resolve the conflicts on [sklearn#34935](https://github.com/scikit-learn/scikit-learn/pull/34935) and find a second reviewer, jjerphan has no time (mitigation heuristics for HGB scalability; approved by ogrisel), dashboards in [benchmarks#81](https://github.com/probabl-ai/scikit-learn-benchmarks/pull/81)
+- [ ] Maintenance: follow up on [sklearn#35254](https://github.com/scikit-learn/scikit-learn/issues/35254): settle option B (classes weighted by n_k / n) with dherrera1911 and betatim, so omarboukherys can open the PR (LDA solvers disagree with custom priors; lll-hhh and omarboukherys ask to confirm the direction)
 
 ## Reviews
 
