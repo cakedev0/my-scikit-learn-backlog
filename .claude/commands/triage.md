@@ -1,6 +1,7 @@
 ---
 description: Assess whether a scikit-learn issue or PR is worth maintainer effort. Checks the author's contribution pattern (via /investigate-github-user) and the real user-facing impact (real, edge case, or artifact nobody will hit). Report only, never acts on GitHub.
 argument-hint: <issue-or-pr-number|url> [more numbers...]
+disable-model-invocation: true
 ---
 
 # Triage: is this issue/PR worth our time?
@@ -54,8 +55,9 @@ gh api repos/<repo>/issues/<N> --jq '{title, user: .user.login, assoc: .author_a
 
 Unless the author is a maintainer (`assoc` is `MEMBER` or `OWNER`) or the user
 themselves, spawn a `general-purpose` agent in the background, right after
-step 1, with this prompt: "Run the `investigate-github-user` skill on
-`<login>` and follow its steps. Report in under 25 lines: the concern level
+step 1, with this prompt (`<backlog>` resolved to its absolute path): "Read
+`<backlog>/.claude/commands/investigate-github-user.md` and follow its steps,
+with `<login>` as `$ARGUMENTS`. Report in under 25 lines: the concern level
 (Low / Medium / High), the key numbers, and 2-3 concrete examples with links."
 For a PR on an issue opened by someone else, investigate the PR author only,
 unless the issue itself looks farmed too.

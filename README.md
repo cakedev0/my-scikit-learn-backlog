@@ -27,7 +27,8 @@ candidate that I read, re-run and decide on before opening anything.
   commit conventions, how a sync decides what to add).
 - `.claude/commands/`: Claude Code commands, available when running `claude`
   from this repo. I also symlink them from `~/.claude/commands/` to use them
-  from my scikit-learn checkout.
+  from my scikit-learn checkout, except `/todo-sync`, which only runs from
+  this repo.
 - `scripts/`: helpers called by the commands (they only read from GitHub).
 
 ## Commands

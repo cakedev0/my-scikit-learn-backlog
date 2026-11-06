@@ -1,6 +1,7 @@
 ---
 description: Context-aware PR review. Reads the PR description, discussion, review threads, decisions already taken, linked issues and related prior work, then runs /code-review and reconciles its findings with that context.
 argument-hint: <pr-number|pr-url> [low|medium|high|xhigh|max] [other /code-review flags]
+disable-model-invocation: true
 ---
 
 # Context-aware PR review

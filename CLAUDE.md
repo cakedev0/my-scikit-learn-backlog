@@ -4,7 +4,11 @@ See `README.md` for the layout and the commands.
 
 - The commands in `.claude/commands/` are also symlinked from
   `~/.claude/commands/`, so they run from the scikit-learn checkout too. Keep
-  their paths as `<backlog>/...` and `<sklearn>`, not relative paths.
+  their paths as `<backlog>/...` and `<sklearn>`, not relative paths. The
+  exception is `/todo-sync`: it only exists in this repo, not symlinked.
+- All the commands but `/todo` have `disable-model-invocation: true`: only I
+  can start them. A command that needs another one reads its file instead of
+  invoking it (see `/triage` step 2).
 - The scikit-learn code lives in `../scikit-learn` (remote `upstream` is
   scikit-learn/scikit-learn); `../scikit-learn/issues` is a symlink to
   `issues/` here. Read upstream code with

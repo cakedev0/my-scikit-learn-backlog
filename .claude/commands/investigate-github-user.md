@@ -1,6 +1,7 @@
 ---
 description: Investigate a GitHub user's public activity for low-effort/AI-farmed drive-by contribution patterns (many unrelated repos/topics in implausibly short timeframes). Report only — never blocks/comments/acts on the account.
 argument-hint: <github-username>
+disable-model-invocation: true
 ---
 
 # Investigate a GitHub User's Contribution Pattern

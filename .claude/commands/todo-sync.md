@@ -1,28 +1,24 @@
 ---
 description: Update my todo list (TODO.md) from my GitHub activity since the last sync, sort the Inbox, and commit. Only reads from GitHub.
 argument-hint: [--since YYYY-MM-DD]
+disable-model-invocation: true
 ---
 
 # Sync the todo list with GitHub
 
-Paths: `<backlog>` is the root of the my-scikit-learn-backlog clone (the
-current directory if it contains `bug-hunting/`, otherwise
-`~/my-scikit-learn-backlog`). Run git in it with `git -C <backlog>`.
-
-Read `<backlog>/todo/INSTRUCTIONS.md` first: it has the item format, the
-sections and the sync rules. Never write to GitHub.
+Read `todo/INSTRUCTIONS.md` first: it has the item format, the sections and
+the sync rules. Never write to GitHub.
 
 ## 0. Pull my edits from GitHub
 
-I may tick or edit items in the GitHub editor. Run `git -C <backlog> fetch`,
-and if `origin/main` has commits that aren't in the local branch,
-`git -C <backlog> pull --rebase --autostash`. On a conflict, abort the
-rebase and ask me.
+I may tick or edit items in the GitHub editor. Run `git fetch`, and if
+`origin/main` has commits that aren't in the local branch,
+`git pull --rebase --autostash`. On a conflict, abort the rebase and ask me.
 
 ## 1. Fetch
 
 ```
-/usr/bin/python3 <backlog>/scripts/todo/fetch_activity.py <scratchpad>/todo-sync $ARGUMENTS
+/usr/bin/python3 scripts/todo/fetch_activity.py <scratchpad>/todo-sync $ARGUMENTS
 ```
 
 It prints one row per thread (tracked, move, reasons, waiting since,
@@ -31,8 +27,8 @@ roles, last activity of me and of others, who requested my review and when,
 review decision, CI, removal date). Takes ~1 min.
 
 Then list my own edits since the last sync: the uncommitted ones
-(`git -C <backlog> diff -- TODO.md todo/`) and the commits after the last
-`sync:` one (`git -C <backlog> log -p <last sync>..HEAD -- TODO.md todo/`).
+(`git diff -- TODO.md todo/`) and the commits after the last `sync:` one
+(`git log -p <last sync>..HEAD -- TODO.md todo/`).
 Rule 0 of the instructions says how to record them (ticked items are done,
 deleted lines are dropped).
 
