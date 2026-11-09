@@ -3,32 +3,39 @@
 ```json
 {
     "estimators": ["KBinsDiscretizer"],
-    "existing_issue": null,
+    "existing_issue": "https://github.com/scikit-learn/scikit-learn/issues/19416",
     "reproduced": true,
     "priority": 1,
-    "difficulty": 2,
-    "decision": 1,
-    "decision_tags": ["output-change"]
+    "difficulty": 3,
+    "decision": 2,
+    "decision_tags": ["output-change", "unclear-spec"]
 }
 ```
 
 ## Classification
 
 - **Priority (1)**: a non-constant feature whose whole range is below ~1e-8 is an exotic input (features are rarely left at that scale, and p-values or probabilities span far more), and the symptoms are a loud `IndexError` with the default `encode="onehot"` or a warning with `"ordinal"`; rescaling first is a cheap workaround. (priority review, 2026-10-23: was 2)
-- **Difficulty (2)**: the threshold has to become relative to the feature scale; choosing the relative tolerance needs a bit of care.
-- **Decision (1)**: `output-change`: features with a range around 1e-8 to 1e-6 can keep bins that are removed today.
+- **Difficulty (3)**: the same edge-removal block also causes #19416 (ties) and #25594 (2 distinct values), so a fix should handle the three together. In #25594, a contributor who tried appending infs and reindexing bins reported that "almost any change will break a lot of stuff: discretization, encoding, calibration". (triage of #35300, 2026-11-09: was 2)
+- **Decision (2)**: `output-change`: features with a range around 1e-8 to 1e-6 can keep bins that are removed today. `unclear-spec`: three incompatible fixes were proposed upstream and none was chosen, so both issues have been "Needs Decision" since 2021 and 2023. (triage of #35300, 2026-11-09: was 1)
 
 ## Upstream search
 
 Queries: "KBinsDiscretizer bins width too small", "KBinsDiscretizer 1e-8", "KBinsDiscretizer small values".
 
+Already reported in #19416 (open, "API", "Needs Decision"). The issue is about ties, but its author posted the small-scale trigger in [a comment](https://github.com/scikit-learn/scikit-learn/issues/19416#issuecomment-780141212) (`uniform(-1e-8, 1e-8)` plus zeros, all bins removed) and asked for the `1e-8` to be a parameter. That example was constructed to make a point; the use case in the thread is the ties one. #19433 was closed as a duplicate of #19416.
+
+#35300 (2026-11-02, found by reading the code, no use case) reported the `n_bins_ == 0` state and the `IndexError`, and was closed as a duplicate of #19416. Its PR #35324 (treat the feature as constant when every bin is removed) was closed by the bot.
+
+Fixes proposed upstream, not compatible with each other:
+
+- a tolerance relative to the feature range (#19416, and the fix below);
+- a tolerance from the dtype resolution, `np.finfo(X.dtype).resolution` (#19416);
+- replacing the first and last edges with `-inf`/`+inf` before removing duplicates (#25594), which can give 3 bins for a binary feature.
+
 Related but different (same edge-removal code, other trigger):
 
-- #19416 (open, "Needs Decision") and #19433 (closed as duplicate of it): bins collapse when many samples share the same value (ties), on data of normal scale.
-- #25594 (open, "Needs Decision"): with only 2 distinct values and `n_bins=3`, a single bin is created because the first/last edges are compared before being replaced by `-inf`/`+inf`.
+- #25594 (open, "Bug", "Needs Decision"): with only 2 distinct values and `n_bins=3`, a single bin is created because the first/last edges are compared before being replaced by `-inf`/`+inf`. Maintainers agreed it's a bug in 2023, but no PR followed.
 - #13165 (merged): introduced the `1e-8` threshold.
-
-None of them covers the scale dependence of the absolute threshold, nor the `n_bins_ == 0` state and the `IndexError` with `encode="onehot"`.
 
 ## Describe the bug and its user-facing impact
 
