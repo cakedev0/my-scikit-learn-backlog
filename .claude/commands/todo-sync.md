@@ -1,5 +1,5 @@
 ---
-description: Update my todo list (TODO.md) from my GitHub activity since the last sync, sort the Inbox, and commit. Only reads from GitHub.
+description: Update my todo list (TODO.md) from my GitHub activity and my Claude Code sessions since the last sync, sort the Inbox, and commit. Only reads from GitHub.
 argument-hint: [--since YYYY-MM-DD]
 disable-model-invocation: true
 ---
@@ -25,6 +25,17 @@ It prints one row per thread (tracked, move, reasons, waiting since,
 updated, URL, title) and writes the details to `threads.json` (author,
 roles, last activity of me and of others, who requested my review and when,
 review decision, CI, removal date). Takes ~1 min.
+
+And condense my Claude Code sessions since the last sync (a few seconds):
+
+```
+/usr/bin/python3 scripts/todo/read_transcripts.py <scratchpad>/todo-sync $ARGUMENTS
+```
+
+It only keeps the sessions started in a public repo of the scikit-learn world
+(the `RELATED` list of the script), prints one row per session (id, last
+activity, repo, prompts, title, end of the last answer) and writes each one
+to `transcripts/<id>.md` (my prompts, the last summaries, the last answers).
 
 Then list my own edits since the last sync: the uncommitted ones
 (`git diff -- TODO.md todo/`) and the commits after the last `sync:` one
@@ -53,14 +64,25 @@ Then apply the "expected from me" test of the instructions: no item for a
 thanks, an approval, a settled answer, others talking. The action says what
 is expected ("answer lorentzenchr's concerns on the condition number").
 
-## 3. Edit
+## 3. Find the clearly unresolved sessions
+
+Apply the "Unresolved sessions" rules of the instructions. The bar is high:
+I close most sessions once I have the answer or the action I needed, and an
+unanswered offer is not an open thread. From the rows, open
+`transcripts/<id>.md` only for the sessions that may have stopped mid-task
+or on a question I must answer. For each candidate, check that it's still
+open: no later session on the same topic, nothing in `threads.json` or on
+the GitHub thread that settled it, not already on the list or in a `drop:`
+line (`git log --grep <first 8 chars of the id>`).
+
+## 4. Edit
 
 Apply the rules of the "Syncing from GitHub" section of the instructions to
 `TODO.md`: remove the ticked items, close done items, move items between
 sections, add the new threads, sort the Inbox. Keep the existing lines and
 their order unless a rule says otherwise.
 
-## 4. Commit and report
+## 5. Commit and report
 
 Commit `TODO.md` and `todo/` only, in one commit: subject
 `sync: <today>`, body with one `add:` / `done:` / `todo:` line per change.
@@ -72,4 +94,6 @@ Then report in the terminal, short:
 - what changed, per section (`+` added, `-` done, `→` moved);
 - the items added in doubt, and the dropped threads added back (rule 3),
   so I know which ones to check first;
+- the items added from sessions, each with its full session id (for
+  `claude --resume <id>`) and one line on why it's still open;
 - the top of `Now`, as the list stands.

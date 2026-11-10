@@ -228,6 +228,46 @@ Apply these rules:
    links resolved to full URLs. When the section isn't clear, pick the
    likeliest one.
 
+### Unresolved sessions
+
+`scripts/todo/read_transcripts.py` condenses my Claude Code sessions since
+the last sync, only those started in a public repo of the scikit-learn world
+(scikit-learn, the benchmarks, the blog, this repo, and the upstream projects
+of the Upstream theme). Personal projects (e.g. convex-clusters), private
+repos and sessions started outside a repo are skipped.
+
+A session gets an item only when it is **clearly** unresolved: I close most
+sessions once I have what I needed, without saying so. Clearly unresolved
+means one of:
+
+- the agent stopped mid-task and waits on me to go on ("tell me when the
+  update is finished and I'll resume", a run stopped halfway), and nothing
+  shows I resumed it since;
+- the agent asked a question that the task can't go on without (a choice
+  between two fixes, which machine to use), and I never answered;
+- the agent left me a step of the task I asked for (a draft comment to
+  post, a PR to open), and it isn't done: check the GitHub thread.
+
+Not unresolved, so no item:
+
+- offers ("want me to draft…?", "I can also…", "tell me if you want…"),
+  suggestions of follow-ups I didn't ask for, cleanup reminders (a worktree
+  to remove, a label left on);
+- an answer, a report or a review that ends the session, even with open
+  questions in it;
+- a session whose topic a later session, a commit, a GitHub comment of mine
+  or an item already on the list covers.
+
+In doubt, leave it out: the opposite of the GitHub rule. The item says
+what's left ("resume the cuML vs Array API run on real embeddings, stopped
+at SIFT1M k=1024"), goes in `Now` (`Later` for experiments, as for fork
+PRs), links the GitHub thread when there is one, and ends its context with
+`session <first 8 chars of the id>`, so the `add:` / `drop:` lines name it
+and a later sync doesn't add it again. The "It's public" rules apply to the
+item, not to the session: leave out what can't be posted (a private repo
+the session touched, internal plans), even when the session started in a
+public repo.
+
 Then commit everything in one commit: subject `sync: <date>`, body with one
 `add:` / `done:` / `todo:` line per change. Don't push.
 

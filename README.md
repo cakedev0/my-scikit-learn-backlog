@@ -47,8 +47,10 @@ candidate that I read, re-run and decide on before opening anything.
 - `/todo [<item> | done <item> | drop <item>]`: add an item to the todo
   list, remove one, or show `Now`.
 - `/todo-sync`: updates the todo list from my GitHub activity since the last
-  sync (reviews to answer, review requests, merged PRs...), sorts the Inbox
-  and commits. Uses `scripts/todo/fetch_activity.py`.
+  sync (reviews to answer, review requests, merged PRs...) and from my Claude
+  Code sessions left clearly unresolved (scikit-learn related public repos
+  only), sorts the Inbox and commits. Uses `scripts/todo/fetch_activity.py`
+  and `scripts/todo/read_transcripts.py`.
 
 The first three only produce a report. They never comment, label, close or block
 anything on GitHub.
