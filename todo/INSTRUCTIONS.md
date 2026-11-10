@@ -256,7 +256,11 @@ Not unresolved, so no item:
 - an answer, a report or a review that ends the session, even with open
   questions in it;
 - a session whose topic a later session, a commit, a GitHub comment of mine
-  or an item already on the list covers.
+  or an item already on the list covers;
+- a draft I copied with `/copy` (it shows in my prompts): I posted it
+  myself, maybe edited;
+- my last prompt left unanswered when I acted on it myself right after
+  (e.g. a comment of mine on the thread minutes later).
 
 In doubt, leave it out: the opposite of the GitHub rule. The item says
 what's left ("resume the cuML vs Array API run on real embeddings, stopped

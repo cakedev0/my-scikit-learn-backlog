@@ -161,6 +161,10 @@ def read_session(path):
                 text = clean_prompt(text_of(d["message"]["content"]))
                 if text:
                     s["prompts"].append((ts, text))
+            elif kind == "user" and text_of(d["message"]["content"]).startswith(
+                "<local-command-stdout>Copied to clipboard"
+            ):
+                s["prompts"].append((ts, "/copy (I copied the last answer)"))
             elif kind == "assistant":
                 text = text_of(d["message"]["content"]).strip()
                 if text:
