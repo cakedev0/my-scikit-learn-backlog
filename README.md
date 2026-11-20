@@ -35,6 +35,10 @@ candidate that I read, re-run and decide on before opening anything.
   apart from the mirrors, scrapers and CI (needs matplotlib). With
   `--report <dir>`, it also writes a README.md with a table of the numbers and
   the plots, like `scripts/pypi-installs/2026-11/`.
+  `uv run scripts/pypi-installs/dashboard.py` writes
+  `scripts/pypi-installs/dashboard/README.md`: who downloads scikit-learn and
+  related packages (CI, OS, Python and release versions, conda), with the
+  methods and their limits.
 
 ## Commands
 
