@@ -102,12 +102,15 @@ def fetch(url, data=None, retries=3):
                     "The hourly quota of the ClickHouse instance is reached. Run"
                     f" again later, the finished queries are cached: {message}"
                 ) from None
-            if error.code < 500 or attempt == retries - 1:
+            # 408 is the 60 s time limit of ClickHouse, when the instance is busy.
+            if error.code not in (408, 429) and error.code < 500:
+                raise SystemExit(f"{url} failed: {error.code} {message}") from None
+            if attempt == retries - 1:
                 raise SystemExit(f"{url} failed: {error.code} {message}") from None
         except (urllib.error.URLError, TimeoutError) as error:
             if attempt == retries - 1:
                 raise SystemExit(f"{url} failed: {error}") from None
-        time.sleep(5 * (attempt + 1))
+        time.sleep(20 * (attempt + 1))
 
 
 def query(sql):
