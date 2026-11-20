@@ -38,6 +38,7 @@ popular one.
 | [scikit-learn-intelex](#scikit-learn-intelex) | 273,743 | 264,498 | 4% | 5% | 1,070 | 578 | 867 |
 | [cuml-cu12](#cuml-cu12) | 304,277 | 245,542 | 21% | 87% | 657 | 392 | 508 |
 | [cuml-cu13](#cuml-cu13) | 9,092 | 6,741 | 19% | 48% | 381 | 252 | 341 |
+| [skore](#skore) | 12,533 | 9,174 | 38% | 69% | 272 | 157 | 219 |
 
 cuML is published on PyPI as one package per CUDA version (`cuml-cu12`,
 `cuml-cu13`), and it is also installed with conda, which is not counted here.
@@ -81,3 +82,7 @@ one-off installs per day.
 ## cuml-cu13
 
 <img src="cuml-cu13.png" alt="Installs of cuml-cu13" width="900">
+
+## skore
+
+<img src="skore.png" alt="Installs of skore" width="900">
