@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # /// script
 # requires-python = ">=3.10"
-# dependencies = ["matplotlib", "pyarrow"]
+# dependencies = ["pyarrow"]
 # ///
 """Write a dashboard of who installs a set of PyPI packages, and what.
 
@@ -13,6 +13,11 @@ their limits are written at the end of the dashboard.
 
     uv run scripts/pypi-installs/dashboard.py
     uv run scripts/pypi-installs/dashboard.py --until 2026-11-19 -o some-dir
+
+It writes one self-contained `index.html`: the numbers as JSON in
+`dashboard_template.html`, which draws the tables and the plots. The
+`pypi-installs-dashboard` workflow runs it every month and publishes the page
+on GitHub Pages.
 
 The PyPI logs come from the public ClickHouse instance behind
 https://clickpy.clickhouse.com, which allows 60 queries per hour: a run takes
@@ -32,14 +37,9 @@ import urllib.error
 import urllib.request
 from collections import Counter, defaultdict
 
-import matplotlib
-
-matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-import pyarrow as pa  # noqa: E402
-import pyarrow.compute as pc  # noqa: E402
-import pyarrow.parquet as pq  # noqa: E402
-from matplotlib.ticker import FuncFormatter, MaxNLocator  # noqa: E402
+import pyarrow as pa
+import pyarrow.compute as pc
+import pyarrow.parquet as pq
 
 
 @dataclasses.dataclass
@@ -82,38 +82,8 @@ INSTALLER_FILTER = "installer IN ({})".format(", ".join(map(repr, INSTALLERS)))
 CI_FLAG_START = datetime.date(2026, 1, 8)
 DAYS = 30
 CLIENT = "country_code, installer, system, python_minor, libc.version, ci"
-SEGMENT_SQL = (
-    "multiIf(ci = 'true', 'CI', system = 'Linux', 'Linux', system = 'Windows',"
-    " 'Windows', system = 'Darwin', 'macOS', 'Other')"
-)
-# Segment: color. The order is the stacking order.
-SEGMENTS = {
-    "CI": "#eda100",
-    "Linux": "#2a78d6",
-    "macOS": "#eb6834",
-    "Windows": "#1baf7a",
-    "Other": "#8a8984",
-}
-SEGMENT_LABELS = {
-    "CI": "CI",
-    "Linux": "Linux, not CI",
-    "macOS": "macOS, not CI",
-    "Windows": "Windows, not CI",
-    "Other": "Other OS",
-}
 DESKTOP = ("Windows", "macOS")
-# Python version group: color (one hue, light to dark, and gray for unknown).
-PYTHONS = {
-    "3.9 or older": "#86b6ef",
-    "3.10": "#5598e7",
-    "3.11": "#2a78d6",
-    "3.12": "#1c5cab",
-    "3.13": "#104281",
-    "3.14 or newer": "#0a2a54",
-    "unknown": "#8a8984",
-}
-INK, MUTED, SURFACE, GRID = "#0b0b0b", "#52514e", "#fcfcfb", "#e4e3df"
-LINE = "#2a78d6"
+TEMPLATE = pathlib.Path(__file__).with_name("dashboard_template.html")
 
 
 # Data
@@ -368,11 +338,6 @@ def median_age(ages):
     return None
 
 
-def months_text(days):
-    months = round(days / 30.4)
-    return "<1 month" if months < 1 else f"{months} month{'s' * (months > 1)}"
-
-
 def describe_client(client):
     system = {"Darwin": "macOS"}.get(client["system"], client["system"] or "?")
     details = f"{client['country'] or '?'}, {client['installer']}, {system}"
@@ -381,498 +346,79 @@ def describe_client(client):
     return details + (", CI" if client["ci"] == "true" else "")
 
 
-def short(value):
-    if value >= 1e6:
-        return f"{value / 1e6:.3g}M"
-    if value >= 1e4:
-        return f"{value / 1e3:.3g}k"
-    return f"{value:,.0f}"
-
-
-def per_100(part, total):
-    value = 100 * part / total
-    return f"{value:.0f}" if value >= 10 else f"{value:.2g}"
-
-
-def share(part, total):
-    if not total:
-        return "n/a"
-    value = 100 * part / total
-    if 0 < value < 0.05:
-        return "<0.1%"
-    return f"{value:.0f}%" if value >= 9.5 or value == 0 else f"{value:.1f}%"
-
-
-def top_shares(counts, count=3):
-    total = sum(counts.values())
-    top = Counter(counts).most_common(count)
-    return ", ".join(f"{name or '?'} {share(n, total)}" for name, n in top) or "n/a"
-
-
-# Plots
-
-
-def style_axes(ax, grid="y"):
-    ax.set_facecolor(SURFACE)
-    ax.tick_params(colors=MUTED, length=0, labelsize=9)
-    ax.grid(axis=grid, color=GRID, linewidth=0.8)
-    ax.set_axisbelow(True)
-    for spine in ax.spines.values():
-        spine.set_visible(False)
-
-
-def short_tick(value, _=None):
-    for unit, size in (("M", 1e6), ("k", 1e3)):
-        if value >= size:
-            return f"{value / size:g}{unit}"
-    return f"{value:g}"
-
-
-def plot_shares(rows, colors, labels, title, output):
-    """One 100% stacked bar per package. `rows` is {package name: Counter}."""
-    fig, ax = plt.subplots(
-        figsize=(9, 0.42 * len(rows) + 1.5), dpi=150, facecolor=SURFACE
-    )
-    names = list(rows)[::-1]
-    left = [0.0] * len(names)
-    for key, color in colors.items():
-        widths = [
-            100 * rows[name][key] / (sum(rows[name].values()) or 1) for name in names
-        ]
-        if not sum(widths):
-            continue
-        ax.barh(
-            names,
-            widths,
-            left=left,
-            color=color,
-            label=labels.get(key, key),
-            height=0.7,
-            edgecolor=SURFACE,
-            linewidth=1.5,
-        )
-        left = [low + width for low, width in zip(left, widths)]
-    ax.set_xlim(0, 100)
-    ax.xaxis.set_major_formatter(FuncFormatter(lambda value, _: f"{value:g}%"))
-    style_axes(ax, grid="x")
-    ax.tick_params(axis="y", labelcolor=INK)
-    ax.legend(
-        loc="lower left",
-        bbox_to_anchor=(0, 1),
-        ncols=len(colors),
-        frameon=False,
-        fontsize=9,
-        labelcolor=INK,
-        borderaxespad=0.2,
-        columnspacing=1.2,
-        handlelength=1.2,
-    )
-    ax.set_title(title, loc="left", fontsize=11, color=INK, pad=30)
-    fig.tight_layout()
-    fig.savefig(output, facecolor=SURFACE)
-    plt.close(fig)
-
-
-def panels(count, columns=3, height=2.1):
-    rows = -(-count // columns)
-    fig, axes = plt.subplots(
-        rows,
-        columns,
-        figsize=(9, height * rows + 0.9),
-        dpi=150,
-        facecolor=SURFACE,
-        squeeze=False,
-    )
-    for ax in axes.flat[count:]:
-        ax.set_visible(False)
-    return fig, list(axes.flat[:count])
-
-
-def finish_panels(fig, title, output, legend_from=None):
-    fig.suptitle(title, x=0.012, ha="left", fontsize=11, color=INK)
-    top = 0.985
-    if legend_from is not None:
-        handles, labels = legend_from.get_legend_handles_labels()
-        fig.legend(
-            handles,
-            labels,
-            loc="upper left",
-            bbox_to_anchor=(0.005, 1 - 0.32 / fig.get_figheight()),
-            ncols=len(labels),
-            frameon=False,
-            fontsize=9,
-            labelcolor=INK,
-            columnspacing=1.2,
-            handlelength=1.2,
-        )
-        top = 1 - 0.55 / fig.get_figheight()
-    else:
-        top = 1 - 0.3 / fig.get_figheight()
-    fig.tight_layout(rect=(0, 0, 1, top), h_pad=1.5)
-    fig.savefig(output, facecolor=SURFACE)
-    plt.close(fig)
-
-
-def plot_daily(all_stats, output):
-    """Downloads per day and segment, one panel per package."""
-    fig, axes = panels(len(all_stats))
-    for ax, stats in zip(axes, all_stats):
-        days = sorted(stats["daily"])
-        base = [0] * len(days)
-        for segment, color in SEGMENTS.items():
-            counts = [stats["daily"][day][segment] for day in days]
-            ax.bar(
-                range(len(days)),
-                counts,
-                bottom=base,
-                color=color,
-                width=0.9,
-                label=SEGMENT_LABELS[segment],
-            )
-            base = [low + count for low, count in zip(base, counts)]
-        weekends = [i for i, day in enumerate(days) if day.weekday() == 5]
-        ax.set_xticks(weekends, [f"{days[i]:%b} {days[i].day}" for i in weekends])
-        ax.yaxis.set_major_locator(MaxNLocator(4, integer=True))
-        ax.yaxis.set_major_formatter(FuncFormatter(short_tick))
-        style_axes(ax)
-        ax.tick_params(labelsize=8)
-        ax.set_title(stats["package"].name, loc="left", fontsize=9.5, color=INK)
-    since, until = all_stats[0]["since"], all_stats[0]["until"]
-    finish_panels(
-        fig,
-        f"Downloads by an installer per day, {since:%b} {since.day} to"
-        f" {until:%b} {until.day}, {until.year} (the ticks are Saturdays)",
-        output,
-        legend_from=axes[0],
-    )
-
-
-def plot_months(series, title, output):
-    """One line per package. `series` is {package name: {month: downloads}}."""
-    fig, axes = panels(len(series), height=1.9)
-    for ax, (name, counts) in zip(axes, series.items()):
-        months = sorted(counts)
-        values = [counts[month] for month in months]
-        ax.plot(range(len(months)), values, color=LINE, linewidth=2)
-        ax.set_ylim(0, max(values or [1]) * 1.25 or 1)
-        ticks = range(0, len(months), 3)
-        ax.set_xticks(ticks, [f"{months[i]:%b %y}" for i in ticks])
-        ax.yaxis.set_major_locator(MaxNLocator(4, integer=True))
-        ax.yaxis.set_major_formatter(FuncFormatter(short_tick))
-        style_axes(ax)
-        ax.tick_params(labelsize=8)
-        ax.set_title(name, loc="left", fontsize=9.5, color=INK)
-        if months:
-            last = f"{months[-1]:%b %y}: {short(values[-1])}"
-            ax.set_title(last, loc="right", fontsize=8, color=MUTED)
-    finish_panels(fig, title, output)
+def top(counts, count=5):
+    return [[name or "?", n] for name, n in Counter(counts).most_common(count)]
 
 
 # Dashboard
 
 
-def table(header, rows):
-    lines = ["| " + " | ".join(header) + " |"]
-    lines.append("|---|" + "---:|" * (len(header) - 1))
-    lines += ["| " + " | ".join(map(str, row)) + " |" for row in rows]
-    return lines
+def package_data(stats):
+    """The numbers of one package, as they go in the page."""
+    package, ages = stats["package"], version_ages(stats)
+    latest = stats["latest"]
+    return {
+        "name": package.name,
+        "pypi": package.pypi,
+        "all": stats["all"],
+        "downloads": stats["downloads"],
+        "previous": stats["previous"],
+        "sdist": stats["sdist"],
+        "segments": stats["segments"],
+        "desktop": stats["desktop"],
+        "weekend_ratio": weekend_ratio(stats),
+        "installers": top(stats["installers"]),
+        "uv": stats["installers"]["uv"],
+        "clients": stats["clients"],
+        "top_clients": [
+            [describe_client(client), int(client["n"])]
+            for client in stats["top_clients"]
+        ],
+        "countries": top(stats["countries"]),
+        "desktop_countries": top(stats["desktop_countries"]),
+        "versions": top(stats["versions"]),
+        "latest": latest,
+        "latest_day": str(stats["release_dates"][latest]),
+        "latest_downloads": stats["versions"].get(latest, 0),
+        "median_age_days": median_age(ages),
+        "dated": sum(n for _, n in ages),
+        "older_than_2_years": sum(n for age, n in ages if age > 730),
+        "pythons": stats["pythons"],
+        "daily": [
+            {"day": str(day), **stats["daily"][day]} for day in sorted(stats["daily"])
+        ],
+    }
 
 
 def write_dashboard(all_stats, pypi_months, conda_months, directory):
-    since, until = all_stats[0]["since"], all_stats[0]["until"]
-    reference = all_stats[0]
-    period = f"{since:%b} {since.day} to {until:%b} {until.day}, {until.year}"
     names = [stats["package"].name for stats in all_stats]
-
-    plot_shares(
-        {s["package"].name: s["segments"] for s in all_stats},
-        SEGMENTS,
-        SEGMENT_LABELS,
-        f"Where the downloads by an installer come from, {period}",
-        directory / "segments.png",
-    )
-    plot_daily(all_stats, directory / "daily.png")
-    plot_shares(
-        {s["package"].name: s["pythons"] for s in all_stats},
-        PYTHONS,
-        {},
-        f"Python version of the downloads by an installer, {period}",
-        directory / "python.png",
-    )
     months = sorted(pypi_months)
-    plot_months(
-        {name: {m: pypi_months[m][name] for m in months} for name in names},
-        "PyPI downloads by an installer per month",
-        directory / "months_pypi.png",
-    )
-    conda_total = {
-        month: {name: sum(counts[name].values()) for name in names}
-        for month, counts in conda_months.items()
+    data = {
+        "since": str(all_stats[0]["since"]),
+        "until": str(all_stats[0]["until"]),
+        "days": DAYS,
+        "installers": INSTALLERS,
+        "ci_flag_start": str(CI_FLAG_START),
+        "packages": [package_data(stats) for stats in all_stats],
+        "months": [str(month) for month in months],
+        "pypi_months": {
+            name: [pypi_months[month][name] for month in months] for name in names
+        },
+        # None for the months that Anaconda has not published yet.
+        "conda_months": {
+            name: [
+                conda_months[month][name] if month in conda_months else None
+                for month in months
+            ]
+            for name in names
+        },
     }
-    if conda_months:
-        plot_months(
-            {name: {m: conda_total[m][name] for m in conda_total} for name in names},
-            "conda downloads per month (conda-forge, defaults and rapidsai channels)",
-            directory / "months_conda.png",
-        )
-
-    lines = [
-        "# Who installs scikit-learn and related packages",
-        "",
-        "> [!WARNING]",
-        "> This is one possible way to read the public download logs, to try to",
-        "> get some insights. Downloads are not users: one CI job or one Docker",
-        "> build is a download each time it runs, and a user with a warm cache",
-        "> is none. The splits below rely on what the installers report and on",
-        "> heuristics. These numbers might not be representative of anything.",
-        "> Read the [methods and limits](#methods-and-limits) before quoting one.",
-        "",
-        f"PyPI numbers: {period} ({DAYS} days). Made by",
-        "`scripts/pypi-installs/dashboard.py`.",
-        "",
-        "## Summary",
-        "",
-    ]
-    rows = []
-    for stats in all_stats:
-        downloads = stats["downloads"]
-        change = (
-            f"{100 * (downloads / stats['previous'] - 1):+.0f}%"
-            if stats["previous"]
-            else "new"
-        )
-        rows.append(
-            [
-                f"[{stats['package'].name}](#{stats['package'].name})",
-                short(stats["all"]),
-                short(downloads),
-                change,
-                share(stats["segments"]["CI"], downloads),
-                short(stats["desktop"]),
-                per_100(stats["desktop"], reference["desktop"]),
-            ]
-        )
-    lines += table(
-        [
-            "Package",
-            "All downloads",
-            "By an installer",
-            f"vs previous {DAYS} days",
-            "In CI",
-            "Desktop",
-            f"Desktop per 100 {reference['package'].name}",
-        ],
-        rows,
-    )
-    lines += [
-        "",
-        "- **All downloads** is the number usually quoted. It includes mirrors and",
-        "  scrapers.",
-        f"- **By an installer**: by {', '.join(INSTALLERS)}. All the numbers below",
-        "  are about these downloads.",
-        "- **In CI**: the installer saw a CI environment variable. Only pip and uv",
-        "  report it, so this is a lower bound.",
-        "- **Desktop**: downloads from Windows and macOS outside of CI. This is the",
-        "  closest thing to people installing the package on their own machine,",
-        "  and I think the most comparable number between packages. It misses",
-        "  the people on Linux, so it is unfair to Linux-only packages like cuml.",
-        "",
-        "## Who downloads",
-        "",
-        '<img src="segments.png" alt="Downloads by segment" width="900">',
-        "",
-    ]
-    rows = []
-    for stats in all_stats:
-        downloads, ratio = stats["downloads"], weekend_ratio(stats)
-        top = stats["top_clients"][0]
-        rows.append(
-            [
-                stats["package"].name,
-                share(stats["segments"]["CI"], downloads),
-                share(stats["segments"]["Linux"], downloads),
-                share(stats["desktop"], downloads),
-                "n/a" if ratio is None else f"{ratio:.2f}",
-                share(stats["installers"]["uv"], downloads),
-                f"{stats['clients']:,}",
-                share(int(top["n"]), downloads),
-                top_shares(stats["desktop_countries"]),
-            ]
-        )
-    lines += table(
-        [
-            "Package",
-            "CI",
-            "Linux, not CI",
-            "Desktop",
-            "Weekend / weekday",
-            "By uv",
-            "Fingerprints",
-            "Top fingerprint",
-            "Top desktop countries",
-        ],
-        rows,
-    )
-    lines += [
-        "",
-        "- **Linux, not CI** mixes servers, containers, cloud notebooks, CI that",
-        "  is not flagged and Linux desktops. It can't be split further.",
-        "- **Weekend / weekday**: downloads of an average Saturday or Sunday over",
-        "  those of an average weekday. Scheduled jobs give 1, people at work",
-        "  give a low value.",
-        "- **Fingerprints**: number of distinct (country, installer, OS, Python",
-        "  version, glibc version, CI flag). **Top fingerprint** is the share of",
-        "  the downloads that come from the largest one. A high value on a small",
-        "  package means that one machine or one pipeline makes the number (see",
-        "  the [details](#details-per-package)).",
-        "",
-        '<img src="daily.png" alt="Downloads per day" width="900">',
-        "",
-        "## What they download",
-        "",
-    ]
-    rows = []
-    for stats in all_stats:
-        downloads, ages = stats["downloads"], version_ages(stats)
-        dated = sum(n for _, n in ages)
-        latest = stats["latest"]
-        median = median_age(ages)
-        rows.append(
-            [
-                stats["package"].name,
-                f"{latest} ({stats['release_dates'][latest]})",
-                share(stats["versions"].get(latest, 0), downloads),
-                "n/a" if median is None else months_text(median),
-                share(sum(n for age, n in ages if age > 730), dated),
-                share(stats["pythons"]["3.9 or older"], downloads),
-                share(stats["sdist"], downloads),
-            ]
-        )
-    lines += table(
-        [
-            "Package",
-            "Latest release",
-            "On the latest release",
-            "Median release age",
-            "Releases older than 2 years",
-            "Python 3.9 or older",
-            "From source",
-        ],
-        rows,
-    )
-    lines += [
-        "",
-        "- **Median release age**: half of the downloads are of a release older",
-        "  than this. Old releases mean pinned environments and old Pythons, more",
-        "  than new users.",
-        "- **From source**: downloads of the sdist, so no wheel matched the",
-        "  platform (or the user asked for a build).",
-        "",
-        '<img src="python.png" alt="Python versions" width="900">',
-        "",
-        "## PyPI and conda per month",
-        "",
-    ]
-    if conda_months:
-        month = max(conda_months)
-        rows = []
-        for name in names:
-            channels = conda_months[month][name]
-            pypi, conda = pypi_months[month][name], conda_total[month][name]
-            others = {k: v for k, v in channels.items() if k != "conda-forge"}
-            rows.append(
-                [
-                    name,
-                    short(pypi),
-                    short(channels["conda-forge"]),
-                    ", ".join(f"{k} {short(v)}" for k, v in sorted(others.items()))
-                    or "0",
-                    share(conda, conda + pypi),
-                ]
-            )
-        lines += [
-            f"Downloads in {month:%B %Y}, the last month published for conda:",
-            "",
-        ]
-        lines += table(
-            [
-                "Package",
-                "PyPI, by an installer",
-                "conda-forge",
-                "Other conda channels",
-                "conda share",
-            ],
-            rows,
-        )
-        lines += [
-            "",
-            "The conda numbers have no CI flag and no OS-level detail in common",
-            "with PyPI, so the conda share compares all the conda downloads with",
-            "all the PyPI downloads by an installer. `anaconda` is the defaults",
-            "channel.",
-            "",
-            '<img src="months_conda.png" alt="conda downloads per month" width="900">',
-            "",
-        ]
-    lines += [
-        '<img src="months_pypi.png" alt="PyPI downloads per month" width="900">',
-        "",
-        "## Details per package",
-    ]
-    for stats in all_stats:
-        package, downloads = stats["package"], stats["downloads"]
-        lines += ["", f"### {package.name}", ""]
-        if package.pypi != (package.name,):
-            lines += [f"PyPI packages: {', '.join(package.pypi)}.", ""]
-        lines += [
-            f"- Installers: {top_shares(stats['installers'], 4)}.",
-            f"- Countries, all installers: {top_shares(stats['countries'], 5)}.",
-            f"- Countries, desktop: {top_shares(stats['desktop_countries'], 5)}.",
-            f"- Releases: {top_shares(stats['versions'], 5)}.",
-            "- Largest fingerprints:",
-        ]
-        for client in stats["top_clients"]:
-            lines.append(
-                f"  - {share(int(client['n']), downloads)}: {describe_client(client)}"
-            )
-    lines += [
-        "",
-        "## Methods and limits",
-        "",
-        "- **Sources.** The PyPI download logs, queried from the public ClickHouse",
-        "  instance behind https://clickpy.clickhouse.com. The release dates come",
-        "  from the PyPI JSON API. The conda numbers come from the monthly files",
-        "  of https://github.com/anaconda/anaconda-package-data.",
-        "- **A download is not an install, and not a user.** pip and uv cache the",
-        "  wheels: reinstalling in a new environment on the same machine is often",
-        "  not a download. A CI job or a Docker build without cache is one each",
-        "  time. So the numbers measure how often the package is fetched, mostly",
-        "  by machines.",
-        "- **By an installer.** The user agent says which tool downloads. Mirrors",
-        "  (bandersnatch, Nexus, Artifactory), browsers and scripts are dropped.",
-        "  People behind a company mirror are invisible: the mirror downloads",
-        "  each file once.",
-        f"- **CI.** pip and uv report since {CI_FLAG_START} whether a CI environment",
-        "  variable is set. poetry, pdm and old pips don't, and a Docker build",
-        "  started by CI does not see the variable. So the CI share is a lower",
-        "  bound, and **Linux, not CI** still has a lot of automation.",
-        "- **Desktop.** Windows and macOS outside of CI. Servers and containers",
-        "  almost never run these OSes, so these downloads are mostly from",
-        "  laptops and workstations. It still counts each new environment of the",
-        "  same person, misses WSL and Linux desktops, and misses conda users.",
-        "- **Fingerprints.** The logs have no IP address or user id. Distinct",
-        "  fingerprints saturate on a popular package (a few thousand",
-        "  combinations exist), so this only tells how spread the downloads are,",
-        "  not how many users there are.",
-        "- **Countries** are those of the IP address: the US share is mostly",
-        "  cloud regions.",
-        "- **conda.** Monthly counts per channel, published a few days after the",
-        "  end of the month, with CI and mirrors included.",
-        f"- **Period.** {DAYS} days is short: a release, a holiday or one",
-        "  misconfigured pipeline moves the numbers. Check the monthly plots",
-        "  before reading a change as a trend.",
-    ]
-    (directory / "README.md").write_text("\n".join(lines) + "\n")
+    # "</" would end the script element of the page.
+    text = json.dumps(data, separators=(",", ":")).replace("</", "<\\/")
+    page = TEMPLATE.read_text()
+    if page.count("/*DATA*/null") != 1:
+        raise SystemExit(f"{TEMPLATE} has no data placeholder.")
+    (directory / "index.html").write_text(page.replace("/*DATA*/null", text))
 
 
 def main():
@@ -880,16 +426,16 @@ def main():
     parser.add_argument(
         "--until",
         type=datetime.date.fromisoformat,
-        default=datetime.date.today() - datetime.timedelta(days=1),
-        help=f"last of the {DAYS} days, YYYY-MM-DD (default: yesterday)",
+        # The logs of yesterday can be incomplete.
+        default=datetime.date.today() - datetime.timedelta(days=2),
+        help=f"last of the {DAYS} days, YYYY-MM-DD (default: 2 days ago)",
     )
     parser.add_argument(
         "-o",
         "--output",
         type=pathlib.Path,
-        default=pathlib.Path(__file__).parent / "dashboard",
-        help="directory to write README.md and the plots (default: dashboard/"
-        " next to this script)",
+        default=pathlib.Path("pypi-installs-dashboard"),
+        help="directory to write index.html (default: pypi-installs-dashboard)",
     )
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
@@ -903,7 +449,7 @@ def main():
     pypi_months = fetch_pypi_months(months)
     conda_months = fetch_conda_months(months)
     write_dashboard(all_stats, pypi_months, conda_months, args.output)
-    print(f"Dashboard written to {args.output / 'README.md'}")
+    print(f"Dashboard written to {args.output / 'index.html'}")
 
 
 if __name__ == "__main__":

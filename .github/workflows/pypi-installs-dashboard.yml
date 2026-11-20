@@ -1,0 +1,55 @@
+name: PyPI installs dashboard
+
+on:
+  schedule:
+    # The 3rd of each month: Anaconda publishes the conda downloads of a month
+    # on the 1st of the next one.
+    - cron: "0 6 3 * *"
+  push:
+    branches:
+      - main
+    paths:
+      - scripts/pypi-installs/dashboard.py
+      - scripts/pypi-installs/dashboard_template.html
+      - .github/workflows/pypi-installs-dashboard.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+
+      - name: Generate the dashboard
+        # The public ClickHouse instance allows 60 queries per hour: if the
+        # quota is reached, run the workflow again later.
+        run: uv run scripts/pypi-installs/dashboard.py -o _site
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
