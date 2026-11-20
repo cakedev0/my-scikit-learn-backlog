@@ -32,6 +32,9 @@ jobs:
 
       - name: Set up uv
         uses: astral-sh/setup-uv@1db35dd8eee11c5894872e0b383ae6c406cf738d # v10.4.0
+        with:
+          # Nothing to cache: the script has one dependency and no lock file.
+          enable-cache: false
 
       - name: Generate the dashboard
         # The public ClickHouse instance allows 60 queries per hour: if the
