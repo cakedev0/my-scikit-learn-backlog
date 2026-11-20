@@ -25,6 +25,13 @@
   --py-5: #104281;
   --py-6: #0a2a54;
   --line: #2a78d6;
+  --g-sklearn: #eb6834;
+  --g-related: #eda100;
+  --g-skore: #3043f0;
+  --g-boosting: #008300;
+  --g-alternative: #e34948;
+  --g-arrays: #1baf7a;
+  --g-dataframes: #e87ba4;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -45,6 +52,13 @@
     --py-5: #9ec5f4;
     --py-6: #cde2fb;
     --line: #3987e5;
+    --g-sklearn: #d95926;
+    --g-related: #c98500;
+    --g-skore: #6f7df7;
+    --g-boosting: #0ca30c;
+    --g-alternative: #e66767;
+    --g-arrays: #199e70;
+    --g-dataframes: #d55181;
   }
 }
 * { box-sizing: border-box; }
@@ -84,6 +98,13 @@ thead button:hover, thead button:focus-visible { background: var(--raised); }
 thead th[aria-sort="ascending"] button::after { content: " \25B2"; font-size: 9px; }
 thead th[aria-sort="descending"] button::after { content: " \25BC"; font-size: 9px; }
 tbody tr:hover { background: var(--raised); }
+tbody td:first-child { box-shadow: inset 4px 0 0 var(--group); padding-left: 12px; }
+.name { white-space: nowrap; }
+.name::before {
+  content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  margin-right: 6px; background: var(--group);
+}
+td .name::before { display: none; }
 .legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; margin: 10px 0 6px; }
 .legend span::before {
   content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 2px;
@@ -138,7 +159,8 @@ summary { cursor: pointer; font-weight: 600; }
 </div>
 
 <h2>Summary</h2>
-<p class="muted">Click a column to sort.</p>
+<p class="muted">Click a column to sort. The colors are the groups of packages:</p>
+<div class="legend" id="groups-legend"></div>
 <div class="scroll"><table id="summary"></table></div>
 <ul class="notes">
   <li><b>All downloads</b> is the number usually quoted. It includes mirrors and scrapers.</li>
@@ -253,6 +275,7 @@ const reference = packages[0];
 // Formatting
 
 function short(value) {
+  if (value >= 1e9) return `${+(value / 1e9).toPrecision(3)}B`;
   if (value >= 1e6) return `${+(value / 1e6).toPrecision(3)}M`;
   if (value >= 1e4) return `${+(value / 1e3).toPrecision(3)}k`;
   return Math.round(value).toLocaleString("en-US");
@@ -296,6 +319,12 @@ function svg(tag, attributes = {}, ...children) {
   for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
   node.append(...children);
   return node;
+}
+
+// The name of a package, with the color of its group.
+function nameOf(item, ...rest) {
+  const label = DATA.groups[item.group];
+  return el("span", { class: "name", style: `--group: var(--g-${item.group})`, title: label }, item.name, ...rest);
 }
 
 const tooltip = document.getElementById("tooltip");
@@ -355,7 +384,9 @@ function table(id, columns, rows) {
   });
   function draw(ordered) {
     body.replaceChildren(
-      ...ordered.map((row) => el("tr", {}, ...columns.map(([, text]) => el("td", {}, text(row))))),
+      ...ordered.map((row) =>
+        el("tr", { style: `--group: var(--g-${row.group})` }, ...columns.map(([, text]) => el("td", {}, text(row)))),
+      ),
     );
   }
   draw(rows);
@@ -389,7 +420,7 @@ function shareBars(id, keys, counts) {
       );
       bar.append(part);
     }
-    root.append(el("div", {}, item.name), bar);
+    root.append(nameOf(item), bar);
   }
 }
 
@@ -422,7 +453,8 @@ function frame(max, labels) {
   );
   return [root, y];
 }
-function panel(name, note, chart) {
+function panel(item, note, chart) {
+  const name = nameOf(item);
   return el("div", { class: "panel" }, el("header", {}, el("b", {}, name), el("span", {}, note)), chart);
 }
 
@@ -471,7 +503,7 @@ function dailyPanel(item) {
     );
     root.append(hit);
   });
-  return panel(item.name, `${short(sum(totals))} in ${DATA.days} days`, root);
+  return panel(item, `${short(sum(totals))} in ${DATA.days} days`, root);
 }
 
 function condaTotal(counts) {
@@ -528,7 +560,7 @@ function monthPanel(item, source) {
   });
   root.append(cross, dot, hit);
   const last = known.length ? short(known[known.length - 1]) : "n/a";
-  return panel(item.name, `last month: ${last}`, root);
+  return panel(item, `last month: ${last}`, root);
 }
 function drawMonths(source) {
   document.getElementById("months").replaceChildren(...packages.map((item) => monthPanel(item, source)));
@@ -539,7 +571,10 @@ function drawMonths(source) {
 
 // Page
 
-const name = ["Package", (p) => p.name, (p) => p.name];
+const name = ["Package", (p) => nameOf(p), (p) => p.name];
+document.getElementById("groups-legend").replaceChildren(
+  ...Object.entries(DATA.groups).map(([id, label]) => el("span", { style: `--color: var(--g-${id})` }, label)),
+);
 document.getElementById("period").textContent =
   `PyPI numbers: ${dayText(DATA.since)} to ${dayText(DATA.until, true)} (${DATA.days} days).`;
 for (const node of document.querySelectorAll(".installers")) node.textContent = DATA.installers.join(", ");
@@ -683,7 +718,7 @@ document.getElementById("packages").replaceChildren(
     return el(
       "details",
       {},
-      el("summary", {}, `${p.name} (${short(p.downloads)} by an installer)`),
+      el("summary", {}, nameOf(p, ` (${short(p.downloads)} by an installer)`)),
       el("ul", {}, ...lines.map((line) => el("li", {}, line)), el("li", {}, "Largest fingerprints:", clients)),
     );
   }),

@@ -21,7 +21,7 @@ on GitHub Pages.
 
 The PyPI logs come from the public ClickHouse instance behind
 https://clickpy.clickhouse.com, which allows 60 queries per hour: a run takes
-about 20. The query results of the day and the monthly conda files (~15 MB
+about 40. The query results of the day and the monthly conda files (~15 MB
 each) are cached in ~/.cache/pypi-installs.
 """
 
@@ -45,6 +45,7 @@ import pyarrow.parquet as pq
 @dataclasses.dataclass
 class Package:
     name: str
+    group: str
     # Names on PyPI and in the conda channels, when they differ from `name`.
     pypi: tuple = ()
     conda: tuple = ()
@@ -54,26 +55,43 @@ class Package:
         self.conda = self.conda or (self.name,)
 
 
+# Group id: label. The colors are in the template.
+GROUPS = {
+    "sklearn": "scikit-learn",
+    "related": "scikit-learn related",
+    "skore": "skore",
+    "boosting": "Boosting",
+    "alternative": "Alternative implementations",
+    "arrays": "SciPy and NumPy",
+    "dataframes": "pandas and Polars",
+}
 # The first package is the reference of the "per 100" column.
 PACKAGES = [
-    Package("scikit-learn"),
+    Package("scikit-learn", "sklearn"),
+    Package("imbalanced-learn", "related"),
+    Package("scikit-survival", "related"),
+    Package("skrub", "related"),
+    Package("skore", "skore"),
     # On conda, `xgboost` is a metapackage that pulls `py-xgboost`.
-    Package("xgboost", conda=("py-xgboost",)),
-    Package("lightgbm"),
-    Package("catboost"),
-    Package("imbalanced-learn"),
-    Package("scikit-survival"),
-    Package("scikit-learn-intelex"),
+    Package("xgboost", "boosting", conda=("py-xgboost",)),
+    Package("lightgbm", "boosting"),
+    Package("catboost", "boosting"),
+    Package("scikit-learn-intelex", "alternative"),
     # One PyPI package per CUDA version.
-    Package("cuml", pypi=("cuml-cu11", "cuml-cu12", "cuml-cu13")),
-    Package("skore"),
-    Package("skrub"),
+    Package("cuml", "alternative", pypi=("cuml-cu11", "cuml-cu12", "cuml-cu13")),
+    Package("scipy", "arrays"),
+    Package("numpy", "arrays"),
+    Package("pandas", "dataframes"),
+    Package("polars", "dataframes"),
 ]
 
 CLICKHOUSE_URL = "https://sql-clickhouse.clickhouse.com/?user=demo"
 # The public instance stops reading after this number of rows and returns a
 # partial result without any error.
 MAX_ROWS_READ = 1_000_000_000
+# Rows that one query should read: the queries of the popular packages are
+# split in periods of about this size, also to stay under the 60 s limit.
+CHUNK_ROWS = 400_000_000
 CONDA_URL = "https://anaconda-package-data.s3.amazonaws.com/conda/monthly"
 CACHE = pathlib.Path.home() / ".cache" / "pypi-installs"
 INSTALLERS = ("pip", "uv", "poetry", "pdm", "pixi")
@@ -82,6 +100,7 @@ INSTALLER_FILTER = "installer IN ({})".format(", ".join(map(repr, INSTALLERS)))
 CI_FLAG_START = datetime.date(2026, 1, 8)
 DAYS = 30
 CLIENT = "country_code, installer, system, python_minor, libc.version, ci"
+CLIENT_FIELDS = ("country", "installer", "system", "python", "glibc", "ci")
 DESKTOP = ("Windows", "macOS")
 TEMPLATE = pathlib.Path(__file__).with_name("dashboard_template.html")
 
@@ -136,6 +155,36 @@ def where(package, since, until, installers=True):
     return condition + (f" AND {INSTALLER_FILTER}" if installers else "")
 
 
+def fetch_volumes(since, until):
+    """Package name: {day: number of rows in the logs}."""
+    by_project = {name: package for package in PACKAGES for name in package.pypi}
+    rows = query(
+        "SELECT project, toString(date) AS day, sum(count) AS n"
+        " FROM pypi.pypi_downloads_per_day"
+        f" WHERE project IN ({', '.join(map(repr, by_project))})"
+        f" AND date >= '{since}' AND date <= '{until}' GROUP BY ALL"
+    )
+    volumes = defaultdict(Counter)
+    for row in rows:
+        day = datetime.date.fromisoformat(row["day"])
+        volumes[by_project[row["project"]].name][day] += int(row["n"])
+    return volumes
+
+
+def chunks(volume, since, until):
+    """Split [since, until] in periods of about CHUNK_ROWS rows each."""
+    periods, start, rows = [], since, 0
+    day = since
+    while day <= until:
+        rows += volume[day]
+        following = day + datetime.timedelta(days=1)
+        if following > until or rows + volume[following] > CHUNK_ROWS:
+            periods.append((start, day))
+            start, rows = following, 0
+        day = following
+    return periods
+
+
 def fetch_release_dates(package):
     """Version: day of its first upload, and the latest stable version."""
     dates = {}
@@ -158,7 +207,7 @@ def segment_of(ci, system):
     )
 
 
-def fetch_package(package, until):
+def fetch_package(package, until, volume):
     """All the PyPI numbers of one package over the last DAYS days."""
     since = until - datetime.timedelta(days=DAYS - 1)
     previous = since - datetime.timedelta(days=DAYS)
@@ -166,59 +215,56 @@ def fetch_package(package, until):
 
     # The instance allows 60 queries per hour: one scan gives all the
     # breakdowns. It also covers the DAYS days before, for the change.
-    keys = {
-        "date": "day",
-        "python_minor": "python",
-        "version": "version",
-        "country_code": "country",
-        "installer": "installer",
-    }
+    keys = ("date", "python_minor", "version", "country_code", "installer")
     flags = ", ".join(f"grouping({column}) AS in_{column}" for column in keys)
     recent = f"date >= '{since}' AND {INSTALLER_FILTER}"
-    rows = query(
-        f"SELECT toString(date) AS day, toString(ci) AS ci_flag, system,"
-        f" python_minor, version, country_code, installer, {flags},"
-        f" countIf(date >= '{since}') AS every,"
-        f" countIf({INSTALLER_FILTER}) AS both_periods,"
-        f" countIf({recent}) AS n,"
-        f" countIf({recent} AND type = 'sdist') AS sdist,"
-        f" countIf({recent} AND ci != 'true' AND system IN ('Windows', 'Darwin'))"
-        " AS desktop FROM pypi.pypi"
-        f" WHERE {where(package, previous, until, installers=False)}"
-        " GROUP BY GROUPING SETS ((date, ci, system), (python_minor), (version),"
-        " (country_code), (installer))"
-    )
     stats["daily"] = daily = defaultdict(Counter)
     stats["installers"] = installers = Counter()
     stats["pythons"] = pythons = Counter()
-    stats["versions"] = versions = {}
-    stats["countries"] = countries = {}
-    stats["desktop_countries"] = desktop_countries = {}
+    stats["versions"] = versions = Counter()
+    stats["countries"] = countries = Counter()
+    stats["desktop_countries"] = desktop_countries = Counter()
     stats["previous"] = stats["all"] = stats["sdist"] = 0
-    for row in rows:
-        # The key of the grouping set of the row is the one with its own flag.
-        values = [row[f"in_{column}"] for column in keys]
-        (key,) = [k for k, v in zip(keys, values) if values.count(v) == 1]
-        n = int(row["n"])
-        if key == "date":
-            day = datetime.date.fromisoformat(row["day"])
-            if day < since:
-                stats["previous"] += int(row["both_periods"])
-            else:
-                daily[day][segment_of(row["ci_flag"], row["system"])] += n
-        elif key == "python_minor":
-            pythons[python_group(row["python_minor"])] += n
-        elif key == "version" and n:
-            versions[row["version"]] = n
-        elif key == "country_code" and n:
-            countries[row["country_code"]] = n
-            if int(row["desktop"]):
-                desktop_countries[row["country_code"]] = int(row["desktop"])
-        elif key == "installer":
-            stats["all"] += int(row["every"])
-            stats["sdist"] += int(row["sdist"])
-            if n:
-                installers[row["installer"]] = n
+    for start, end in chunks(volume, previous, until):
+        rows = query(
+            f"SELECT toString(date) AS day, toString(ci) AS ci_flag, system,"
+            f" python_minor, version, country_code, installer, {flags},"
+            f" countIf(date >= '{since}') AS every,"
+            f" countIf({INSTALLER_FILTER}) AS both_periods,"
+            f" countIf({recent}) AS n,"
+            f" countIf({recent} AND type = 'sdist') AS sdist,"
+            f" countIf({recent} AND ci != 'true' AND system IN ('Windows',"
+            " 'Darwin')) AS desktop FROM pypi.pypi"
+            f" WHERE {where(package, start, end, installers=False)}"
+            " GROUP BY GROUPING SETS ((date, ci, system), (python_minor),"
+            " (version), (country_code), (installer))"
+        )
+        for row in rows:
+            # The key of the grouping set of the row is the one with its own
+            # flag.
+            values = [row[f"in_{column}"] for column in keys]
+            (key,) = [k for k, v in zip(keys, values) if values.count(v) == 1]
+            n = int(row["n"])
+            if key == "date":
+                day = datetime.date.fromisoformat(row["day"])
+                if day < since:
+                    stats["previous"] += int(row["both_periods"])
+                else:
+                    daily[day][segment_of(row["ci_flag"], row["system"])] += n
+            elif key == "python_minor":
+                pythons[python_group(row["python_minor"])] += n
+            elif key == "version":
+                versions[row["version"]] += n
+            elif key == "country_code":
+                countries[row["country_code"]] += n
+                desktop_countries[row["country_code"]] += int(row["desktop"])
+            elif key == "installer":
+                stats["all"] += int(row["every"])
+                stats["sdist"] += int(row["sdist"])
+                installers[row["installer"]] += n
+    for counts in (installers, versions, countries, desktop_countries):
+        for name in [name for name, n in counts.items() if not n]:
+            del counts[name]
     stats["segments"] = segments = Counter()
     for counts in daily.values():
         segments.update(counts)
@@ -227,15 +273,27 @@ def fetch_package(package, until):
     if not stats["downloads"]:
         raise SystemExit(f"No download of {package.name} by an installer.")
 
-    # A client is a fingerprint: the logs have no IP address.
-    stats["top_clients"] = top = query(
-        "SELECT country_code AS country, installer, system, python_minor AS"
-        " python, `libc.version` AS glibc, toString(ci) AS ci, n,"
-        f" count() OVER () AS clients FROM (SELECT {CLIENT}, count() AS n"
-        f" FROM pypi.pypi WHERE {where(package, since, until)} GROUP BY {CLIENT})"
-        " ORDER BY n DESC LIMIT 5"
-    )
-    stats["clients"] = int(top[0]["clients"])
+    # A client is a fingerprint: the logs have no IP address. Each period
+    # gives one row, with the downloads of all its clients (by hash, to add
+    # them up between periods) and the description of its largest ones.
+    clients, described = Counter(), {}
+    fields = "country_code, installer, system, python_minor, `libc.version`, ci"
+    for start, end in chunks(volume, since, until):
+        (row,) = query(
+            "SELECT groupArray(h) AS hashes, groupArray(n) AS counts,"
+            " arraySlice(arrayReverseSort(x -> x.1, groupArray((n, h,"
+            f" {fields}))), 1, 50) AS largest FROM (SELECT {fields},"
+            f" cityHash64({fields}) AS h, count() AS n FROM pypi.pypi"
+            f" WHERE {where(package, start, end)} GROUP BY {CLIENT})"
+        )
+        for key, n in zip(row["hashes"], row["counts"]):
+            clients[key] += int(n)
+        for _, key, *values in row["largest"]:
+            described[key] = dict(zip(CLIENT_FIELDS, values))
+    stats["clients"] = len(clients)
+    # A client that is not among the largest of any period can't be shown.
+    largest = [(key, n) for key, n in clients.most_common(50) if key in described]
+    stats["top_clients"] = [{**described[key], "n": n} for key, n in largest[:5]]
     stats["release_dates"], stats["latest"] = fetch_release_dates(package)
     return stats
 
@@ -362,6 +420,7 @@ def package_data(stats):
     latest = stats["latest"]
     return {
         "name": package.name,
+        "group": package.group,
         "pypi": package.pypi,
         "all": stats["all"],
         "downloads": stats["downloads"],
@@ -402,6 +461,7 @@ def write_dashboard(all_stats, pypi_months, conda_months, directory):
         "days": DAYS,
         "installers": INSTALLERS,
         "ci_flag_start": str(CI_FLAG_START),
+        "groups": GROUPS,
         "packages": [package_data(stats) for stats in all_stats],
         "months": [str(month) for month in months],
         "pypi_months": {
@@ -443,10 +503,11 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
 
+    volumes = fetch_volumes(args.until - datetime.timedelta(2 * DAYS), args.until)
     all_stats = []
     for package in PACKAGES:
         print(f"Fetching {package.name}")
-        all_stats.append(fetch_package(package, args.until))
+        all_stats.append(fetch_package(package, args.until, volumes[package.name]))
     months = last_months(args.until)
     print("Fetching the months")
     pypi_months = fetch_pypi_months(months)
