@@ -30,9 +30,11 @@ candidate that I read, re-run and decide on before opening anything.
   from my scikit-learn checkout, except `/todo-sync`, which only runs from
   this repo.
 - `scripts/`: helpers called by the commands (they only read from GitHub).
-  `scripts/pypi-installs/plot_installs.py <package>` is standalone: it plots
-  the one-off pip/uv installs of a small PyPI package from the download logs,
-  apart from the mirrors, scrapers and CI (needs matplotlib).
+  `scripts/pypi-installs/plot_installs.py <package> [...]` is standalone: it
+  plots the one-off pip/uv installs of PyPI packages from the download logs,
+  apart from the mirrors, scrapers and CI (needs matplotlib). With
+  `--report <dir>`, it also writes a README.md with a table of the numbers and
+  the plots, like `scripts/pypi-installs/2026-11/`.
 
 ## Commands
 
