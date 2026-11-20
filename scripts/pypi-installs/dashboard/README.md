@@ -24,6 +24,7 @@ PyPI numbers: Oct 21 to Nov 19, 2026 (30 days). Made by
 | [scikit-learn-intelex](#scikit-learn-intelex) | 274k | 264k | +142% | 4.1% | 741 | 0.012 |
 | [cuml](#cuml) | 314k | 253k | +22% | 21% | 268 | 0.0044 |
 | [skore](#skore) | 12.5k | 9,174 | +80% | 38% | 171 | 0.0028 |
+| [skrub](#skrub) | 287k | 274k | +47% | 47% | 11.2k | 0.18 |
 
 - **All downloads** is the number usually quoted. It includes mirrors and
   scrapers.
@@ -51,6 +52,7 @@ PyPI numbers: Oct 21 to Nov 19, 2026 (30 days). Made by
 | scikit-learn-intelex | 4.1% | 96% | 0.3% | 0.19 | 5.2% | 1,070 | 58% | US 17%, JP 12%, DE 7.7% |
 | cuml | 21% | 79% | 0.1% | 0.59 | 86% | 901 | 57% | US 11%, CA 11%, CN 10% |
 | skore | 38% | 60% | 1.9% | 0.27 | 69% | 272 | 28% | FR 48%, US 9.4%, SG 5.8% |
+| skrub | 47% | 49% | 4.1% | 0.45 | 64% | 3,340 | 8.7% | US 21%, CN 7.5%, JP 6.9% |
 
 - **Linux, not CI** mixes servers, containers, cloud notebooks, CI that
   is not flagged and Linux desktops. It can't be split further.
@@ -78,6 +80,7 @@ PyPI numbers: Oct 21 to Nov 19, 2026 (30 days). Made by
 | scikit-learn-intelex | 2026.2.0 (2026-10-16) | 63% | 1 month | 33% | 30% | 0% |
 | cuml | 26.10.0 (2026-10-08) | 1.2% | 7 months | 0.2% | 0.1% | 3.9% |
 | skore | 0.29.1 (2026-11-01) | 12% | 1 month | 1.1% | 2.2% | 4.5% |
+| skrub | 0.11.0 (2026-10-01) | 13% | 3 months | 0.2% | 0.4% | 0.9% |
 
 - **Median release age**: half of the downloads are of a release older
   than this. Old releases mean pinned environments and old Pythons, more
@@ -102,6 +105,7 @@ Downloads in October 2026, the last month published for conda:
 | scikit-learn-intelex | 239k | 3,881 | anaconda 16k | 7.7% |
 | cuml | 260k | 0 | rapidsai 7,072 | 2.7% |
 | skore | 7,558 | 599 | 0 | 7.3% |
+| skrub | 224k | 1,387 | 0 | 0.6% |
 
 The conda numbers have no CI flag and no OS-level detail in common
 with PyPI, so the conda share compares all the conda downloads with
@@ -232,6 +236,19 @@ PyPI packages: cuml-cu11, cuml-cu12, cuml-cu13.
   - 6.4%: US, uv, Linux, Python 3.11, glibc 2.43, CI
   - 6.0%: CN, pip, Linux, Python 3.12, glibc 2.41
   - 4.4%: US, pip, Linux, Python 3.12, glibc 2.41
+
+### skrub
+
+- Installers: uv 64%, pip 35%, poetry 0.8%.
+- Countries, all installers: US 55%, DE 10%, NL 7.5%, GB 4.5%, SG 3.4%.
+- Countries, desktop: US 21%, CN 7.5%, JP 6.9%, KR 5.9%, DE 5.5%.
+- Releases: 0.10.1 42%, 0.10.0 19%, 0.11.0 13%, 0.5.3 11%, 0.9.0 9.2%.
+- Largest fingerprints:
+  - 8.7%: DE, uv, Linux, Python 3.13, glibc 2.39, CI
+  - 6.0%: US, uv, Linux, Python 3.12, glibc 2.39, CI
+  - 5.2%: US, uv, Linux, Python 3.12, glibc 2.36, CI
+  - 4.0%: NL, pip, Linux, Python 3.12, glibc 2.39
+  - 3.7%: US, pip, Linux, Python 3.13, glibc 2.39
 
 ## Methods and limits
 

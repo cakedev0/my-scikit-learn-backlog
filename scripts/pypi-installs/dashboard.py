@@ -67,6 +67,7 @@ PACKAGES = [
     # One PyPI package per CUDA version.
     Package("cuml", pypi=("cuml-cu11", "cuml-cu12", "cuml-cu13")),
     Package("skore"),
+    Package("skrub"),
 ]
 
 CLICKHOUSE_URL = "https://sql-clickhouse.clickhouse.com/?user=demo"
