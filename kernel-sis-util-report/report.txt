@@ -227,6 +227,25 @@ results and without an explanation of the mechanism:
 - libomp, 2021, commit 7a5680233e03 ("[OpenMP] Set default blocktime to 0
   for hybrid cpu", D113012), no rationale in the commit message.
 
+Not spinning has its own cost, which can be much larger for code with
+many short regions. scikit-learn's HistGradientBoosting runs about 10000
+parallel regions per fit, and without spinning, waking the threads at
+each region dominates small and medium fits. On a Core Ultra X7 358H
+laptop with a recent libgomp (no spinning), a fit on the covtype dataset
+takes 11 s on 4 threads and 38 s on 8. With the old libgomp (spinning),
+small and medium fits stay roughly flat or keep getting faster up to 8
+threads [1][2]. In scikit-learn we are working around it by using fewer
+threads when the runtime does not spin [3]. We cannot pick the setting
+ourselves: libgomp reads GOMP_SPINCOUNT once, when it is loaded, and has
+no API to change it at runtime. So whether threads spin depends on the
+user's environment and on which libgomp gets loaded, not on the code.
+Spinning stays the better setting for code like this, and that is the
+case this regression hits.
+
+[1] https://github.com/scikit-learn/scikit-learn/issues/34764
+[2] https://probabl-ai.github.io/scikit-learn-benchmarks/hgb_scaling.html
+[3] https://github.com/scikit-learn/scikit-learn/pull/34935
+
 Questions
 ---------
 
