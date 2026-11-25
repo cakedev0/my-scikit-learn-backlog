@@ -1,0 +1,125 @@
+diff --git a/libgomp/config/linux/wait.h b/libgomp/config/linux/wait.h
+index f914140..1c58462 100644
+--- a/libgomp/config/linux/wait.h
++++ b/libgomp/config/linux/wait.h
+@@ -44,10 +44,12 @@
+ extern int gomp_futex_wait, gomp_futex_wake;
+ 
+ #include <futex.h>
++#include <sched.h>
+ 
+ static inline int do_spin (int *addr, int val)
+ {
+   unsigned long long i, count = gomp_spin_count_var;
++  unsigned long long yield = gomp_spin_yield_var, until_yield = yield;
+ 
+   if (__builtin_expect (__atomic_load_n (&gomp_managed_threads,
+                                          MEMMODEL_RELAXED)
+@@ -57,7 +59,18 @@ static inline int do_spin (int *addr, int val)
+     if (__builtin_expect (__atomic_load_n (addr, MEMMODEL_RELAXED) != val, 0))
+       return 0;
+     else
+-      cpu_relax ();
++      {
++	cpu_relax ();
++	/* Let other threads run from time to time: a thread of the team
++	   that blocked (e.g. on a mutex) or a thread of another runtime may
++	   be waiting for a CPU, and would otherwise only get one once the
++	   spinning threads go to sleep.  */
++	if (yield && --until_yield == 0)
++	  {
++	    sched_yield ();
++	    until_yield = yield;
++	  }
++      }
+   return 1;
+ }
+ 
+diff --git a/libgomp/env.c b/libgomp/env.c
+index 1d659ad..3ac6297 100644
+--- a/libgomp/env.c
++++ b/libgomp/env.c
+@@ -107,6 +107,9 @@ gomp_mutex_t gomp_managed_threads_lock;
+ #endif
+ unsigned long gomp_available_cpus = 1, gomp_managed_threads = 1;
+ unsigned long long gomp_spin_count_var, gomp_throttled_spin_count_var;
++/* Number of iterations of the busy-wait loop between calls to sched_yield,
++   0 to never yield.  */
++unsigned long long gomp_spin_yield_var = 100;
+ unsigned long *gomp_nthreads_var_list, gomp_nthreads_var_list_len;
+ char *gomp_bind_var_list;
+ unsigned long gomp_bind_var_list_len;
+@@ -2021,6 +2024,13 @@ omp_display_env (int verbose)
+ #else
+       fprintf (stderr, "  [host] GOMP_SPINCOUNT = '%lu'\n",
+ 	       (unsigned long) gomp_spin_count_var);
++#endif
++#ifdef HAVE_INTTYPES_H
++      fprintf (stderr, "  [host] GOMP_SPIN_YIELD = '%"PRIu64"'\n",
++	       (uint64_t) gomp_spin_yield_var);
++#else
++      fprintf (stderr, "  [host] GOMP_SPIN_YIELD = '%lu'\n",
++	       (unsigned long) gomp_spin_yield_var);
+ #endif
+       fputs ("  [all] GOMP_RUNTIME_USM = '", stderr);
+       switch (gomp_runtime_usm_var)
+@@ -2491,6 +2501,7 @@ initialize_env (void)
+   else if (all != NULL && gomp_get_icv_flag (all->flags, GOMP_ICV_WAIT_POLICY))
+     wait_policy = all->icvs.wait_policy;
+ 
++  parse_spincount ("GOMP_SPIN_YIELD", &gomp_spin_yield_var);
+   if (!parse_spincount ("GOMP_SPINCOUNT", &gomp_spin_count_var))
+     {
+       /* Using a rough estimation of 100000 spins per msec,
+diff --git a/libgomp/libgomp.h b/libgomp/libgomp.h
+index c4bab10..bcdb858 100644
+--- a/libgomp/libgomp.h
++++ b/libgomp/libgomp.h
+@@ -607,6 +607,7 @@ extern bool gomp_cancel_var;
+ extern enum gomp_target_offload_t gomp_target_offload_var;
+ extern int gomp_max_task_priority_var;
+ extern unsigned long long gomp_spin_count_var, gomp_throttled_spin_count_var;
++extern unsigned long long gomp_spin_yield_var;
+ extern unsigned long gomp_available_cpus, gomp_managed_threads;
+ extern unsigned long *gomp_nthreads_var_list, gomp_nthreads_var_list_len;
+ extern char *gomp_bind_var_list;
+diff --git a/libgomp/libgomp.texi b/libgomp/libgomp.texi
+index f3f95df..b6da70d 100644
+--- a/libgomp/libgomp.texi
++++ b/libgomp/libgomp.texi
+@@ -4649,6 +4649,7 @@ variable is not set.
+ * GOMP_RUNTIME_USM::        Control runtime Unified Shared Memory application
+ * GOMP_STACKSIZE::          Set default thread stack size
+ * GOMP_SPINCOUNT::          Set the busy-wait spin count
++* GOMP_SPIN_YIELD::         Yield the CPU while busy-waiting
+ * GOMP_RTEMS_THREAD_POOLS:: Set the RTEMS specific thread pools
+ @end menu
+ 
+@@ -5363,7 +5364,26 @@ undefined, respectively; unless the @env{GOMP_SPINCOUNT} is lower
+ or @env{OMP_WAIT_POLICY} is @code{PASSIVE}.
+ 
+ @item @emph{See also}:
+-@ref{OMP_WAIT_POLICY}
++@ref{OMP_WAIT_POLICY}, @ref{GOMP_SPIN_YIELD}
++@end table
++
++
++
++@node GOMP_SPIN_YIELD
++@section @env{GOMP_SPIN_YIELD} -- Yield the CPU while busy-waiting
++@cindex Environment Variable
++@cindex Implementation specific setting
++@table @asis
++@item @emph{Description}:
++Number of spins of the busy-wait loop (@pxref{GOMP_SPINCOUNT}) after which
++a waiting thread calls @code{sched_yield}, so that other runnable threads,
++for instance a thread of the team that blocked or a thread of another
++library, can use the CPU.  The value is an integer with the same optional
++suffixes as @env{GOMP_SPINCOUNT}; @code{0} disables yielding.  If undefined,
++100 is used.  This setting is only used on Linux.
++
++@item @emph{See also}:
++@ref{GOMP_SPINCOUNT}, @ref{OMP_WAIT_POLICY}
+ @end table
+ 
+ 
