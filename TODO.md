@@ -19,6 +19,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] GPU: resume the cuML vs Array API k-means run on real embeddings of [ogrisel/cursor-sandbox#17](https://github.com/ogrisel/cursor-sandbox/pull/17) on aws-l4-3, stopped before CLIP k=1024 (the remaining CLIP fits are left; session 5987853b)
 - [ ] KMeans: answer betatim on [sklearn#35383](https://github.com/scikit-learn/scikit-learn/issues/35383) (maxmbay proposes to add e-means clustering; betatim asks for a use case and suggests clustering embeddings as the user example)
 - [ ] Threads: answer andrew-chung-au on [sklearn#35089](https://github.com/scikit-learn/scikit-learn/issues/35089) (thread-based `Parallel` can corrupt the warning filters; he reproduces it on a GIL build with `GridSearchCV` over a random forest and the default switch interval, which I couldn't; new since I removed it from the list)
+- [ ] Upstream: send ilayn my OpenBLAS PRs, [cakedev0/OpenBLAS#3](https://github.com/cakedev0/OpenBLAS/pull/3), [cakedev0/OpenBLAS#8](https://github.com/cakedev0/OpenBLAS/pull/8), [cakedev0/OpenBLAS#11](https://github.com/cakedev0/OpenBLAS/pull/11), [cakedev0/OpenBLAS#10](https://github.com/cakedev0/OpenBLAS/pull/10) (he's interested; fewer threads for small calls, split k in gemm and syrk; see the Later item to upstream them)
 
 ## Reviews
 
