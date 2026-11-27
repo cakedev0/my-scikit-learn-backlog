@@ -15,6 +15,7 @@ to make scikit-learn faster on Intel hardware. How it's kept:
 - [ ] Benchmarks: write the email to Phoronix from the audit of the PTS scikit-learn suite on intel-xeon, and decide on a second sweep with a working BLAS ([note](https://github.com/probabl-ai/scikit-learn-benchmarks/blob/pts-sklearn-audit/pts-sklearn-audit/README.md) on the `pts-sklearn-audit` branch: 14 of the 40 entries give no score, the profile's OpenBLAS doesn't build so numpy runs without BLAS, 18 of the 26 scored entries spend over 94% of their time inside scikit-learn; session 4f61de4c)
 - [ ] KMeans: fix the CI of [cakedev0/sklearn-contrib-emeans#25](https://github.com/cakedev0/sklearn-contrib-emeans/pull/25) (`assignment="two-level"` on NVIDIA GPUs, with PyTorch CUDA tensors and CuPy arrays; draft, the test jobs are red)
 - [ ] Maintenance: address lesteve's review on [sklearn#35472](https://github.com/scikit-learn/scikit-learn/pull/35472) (CI: comment and label new PRs and issues with the AgentScan results; he asks for a link to the author's AgentScan page and Markdown alerts by verdict, and is still thinking about the wording of the comment)
+- [ ] Upstream: send ilayn my OpenBLAS PRs, [cakedev0/OpenBLAS#3](https://github.com/cakedev0/OpenBLAS/pull/3), [cakedev0/OpenBLAS#8](https://github.com/cakedev0/OpenBLAS/pull/8), [cakedev0/OpenBLAS#11](https://github.com/cakedev0/OpenBLAS/pull/11), [cakedev0/OpenBLAS#10](https://github.com/cakedev0/OpenBLAS/pull/10) (he's interested; fewer threads for small calls, split k in gemm and syrk; see the Later item to upstream them)
 
 ## Reviews
 
