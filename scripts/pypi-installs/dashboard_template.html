@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Who installs scikit-learn and related packages</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface: #fcfcfb;
+  --raised: #f3f2ef;
+  --ink: #0b0b0b;
+  --muted: #52514e;
+  --grid: #e4e3df;
+  --warn-edge: #c98500;
+  --ci: #eda100;
+  --linux: #2a78d6;
+  --macos: #eb6834;
+  --windows: #1baf7a;
+  --other: #8a8984;
+  --py-1: #86b6ef;
+  --py-2: #5598e7;
+  --py-3: #2a78d6;
+  --py-4: #1c5cab;
+  --py-5: #104281;
+  --py-6: #0a2a54;
+  --line: #2a78d6;
+  --g-sklearn: #eb6834;
+  --g-related: #eda100;
+  --g-skore: #3043f0;
+  --g-boosting: #008300;
+  --g-alternative: #e34948;
+  --g-arrays: #1baf7a;
+  --g-dataframes: #e87ba4;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --surface: #1a1a19;
+    --raised: #262624;
+    --ink: #f0efec;
+    --muted: #c3c2b7;
+    --grid: #383835;
+    --ci: #c98500;
+    --linux: #3987e5;
+    --macos: #d95926;
+    --windows: #199e70;
+    --py-1: #184f95;
+    --py-2: #256abf;
+    --py-3: #3987e5;
+    --py-4: #6da7ec;
+    --py-5: #9ec5f4;
+    --py-6: #cde2fb;
+    --line: #3987e5;
+    --g-sklearn: #d95926;
+    --g-related: #c98500;
+    --g-skore: #6f7df7;
+    --g-boosting: #0ca30c;
+    --g-alternative: #e66767;
+    --g-arrays: #199e70;
+    --g-dataframes: #d55181;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--surface);
+  color: var(--ink);
+  font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+main { max-width: 1080px; margin: 0 auto; padding: 24px 16px 64px; }
+h1 { font-size: 26px; line-height: 1.2; margin: 0 0 8px; }
+h2 { font-size: 19px; margin: 44px 0 8px; }
+h3 { font-size: 15px; margin: 24px 0 6px; }
+p, ul { margin: 8px 0; }
+ul { padding-left: 20px; }
+a { color: var(--line); }
+code { font-size: 13px; }
+.muted { color: var(--muted); }
+.warning {
+  border-left: 4px solid var(--warn-edge);
+  background: var(--raised);
+  padding: 10px 14px;
+  margin: 16px 0;
+}
+.notes { color: var(--muted); font-size: 13.5px; }
+.scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 10px 0; }
+th, td { padding: 6px 8px; text-align: right; white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+td { border-top: 1px solid var(--grid); font-variant-numeric: tabular-nums; }
+thead th { vertical-align: bottom; white-space: normal; font-weight: 600; padding: 0; }
+thead button {
+  font: inherit; color: inherit; background: none; border: 0; cursor: pointer;
+  padding: 6px 8px; width: 100%; text-align: inherit;
+}
+thead button:hover, thead button:focus-visible { background: var(--raised); }
+thead th[aria-sort="ascending"] button::after { content: " \25B2"; font-size: 9px; }
+thead th[aria-sort="descending"] button::after { content: " \25BC"; font-size: 9px; }
+tbody tr:hover { background: var(--raised); }
+tbody td:first-child { box-shadow: inset 4px 0 0 var(--group); padding-left: 12px; }
+.name { white-space: nowrap; }
+.name::before {
+  content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+  margin-right: 6px; background: var(--group);
+}
+td .name::before { display: none; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 13px; margin: 10px 0 6px; }
+.legend span::before {
+  content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 2px;
+  margin-right: 6px; background: var(--color);
+}
+.bars { display: grid; grid-template-columns: max-content 1fr; gap: 6px 10px; align-items: center; font-size: 13.5px; }
+.bar { display: flex; height: 22px; gap: 2px; }
+.bar div { background: var(--color); min-width: 0; }
+.bar div:first-child { border-radius: 4px 0 0 4px; }
+.bar div:last-child { border-radius: 0 4px 4px 0; }
+.bar div:hover, .bar div:focus-visible { filter: brightness(1.15); outline: none; }
+.panels { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 18px 22px; margin: 12px 0; }
+.panel header { display: flex; justify-content: space-between; align-items: baseline; font-size: 13.5px; gap: 8px; }
+.panel header span { color: var(--muted); font-size: 12.5px; white-space: nowrap; }
+svg { display: block; width: 100%; height: auto; overflow: visible; }
+svg text { fill: var(--muted); font-size: 11px; }
+.gridline { stroke: var(--grid); stroke-width: 1; }
+.weekend { fill: var(--raised); }
+.cross { stroke: var(--muted); stroke-width: 1; visibility: hidden; }
+.hit { fill: transparent; }
+.toggle { display: inline-flex; border: 1px solid var(--grid); border-radius: 6px; overflow: hidden; margin: 8px 0; }
+.toggle button {
+  font: inherit; font-size: 13.5px; color: var(--muted); background: none; border: 0;
+  padding: 5px 12px; cursor: pointer;
+}
+.toggle button[aria-pressed="true"] { background: var(--raised); color: var(--ink); font-weight: 600; }
+#tooltip {
+  position: fixed; z-index: 10; pointer-events: none; display: none;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--grid);
+  border-radius: 6px; padding: 7px 10px; font-size: 12.5px; max-width: 280px;
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.18);
+}
+#tooltip .head { color: var(--muted); margin-bottom: 3px; }
+#tooltip .row { display: flex; gap: 8px; align-items: center; }
+#tooltip .row b { margin-left: auto; padding-left: 12px; font-variant-numeric: tabular-nums; }
+#tooltip .key { width: 12px; height: 3px; border-radius: 2px; background: var(--color); }
+details { border-top: 1px solid var(--grid); padding: 8px 0; }
+summary { cursor: pointer; font-weight: 600; }
+</style>
+</head>
+<body>
+<main>
+<h1>Who installs scikit-learn and related packages</h1>
+<p class="muted" id="period"></p>
+<div class="warning">
+  <strong>Read this first.</strong> This is one possible way to read the public
+  download logs, to try to get some insights. Downloads are not users: one CI
+  job or one Docker build is a download each time it runs, and a user with a
+  warm cache is none. The splits below rely on what the installers report and
+  on heuristics. These numbers might not be representative of anything. Read
+  the <a href="#methods">methods and limits</a> before quoting one.
+</div>
+
+<h2>Summary</h2>
+<p class="muted">Click a column to sort. The colors are the groups of packages:</p>
+<div class="legend" id="groups-legend"></div>
+<div class="scroll"><table id="summary"></table></div>
+<ul class="notes">
+  <li><b>All downloads</b> is the number usually quoted. It includes mirrors and scrapers.</li>
+  <li><b>By an installer</b>: by <span class="installers"></span>. All the numbers below are about these downloads.</li>
+  <li><b>In CI</b>: the installer saw a CI environment variable. Only pip and uv report it, so this is a lower bound.</li>
+  <li><b>Desktop</b>: downloads from Windows and macOS outside of CI. This is the closest thing to people
+    installing the package on their own machine, and I think the most comparable number between packages.
+    It misses the people on Linux, so it is unfair to Linux-only packages like cuml.</li>
+</ul>
+
+<h2>Who downloads</h2>
+<div class="legend" id="segments-legend"></div>
+<div class="bars" id="segments"></div>
+<div class="scroll"><table id="who"></table></div>
+<ul class="notes">
+  <li><b>Linux, not CI</b> mixes servers, containers, cloud notebooks, CI that is not flagged and Linux desktops.
+    It can't be split further.</li>
+  <li><b>Weekend / weekday</b>: downloads of an average Saturday or Sunday over those of an average weekday.
+    Scheduled jobs give 1, people at work give a low value.</li>
+  <li><b>Fingerprints</b>: number of distinct (country, installer, OS, Python version, glibc version, CI flag).
+    <b>Top fingerprint</b> is the share of the downloads that come from the largest one. A high value on a small
+    package means that one machine or one pipeline makes the number (see the <a href="#details">details</a>).</li>
+</ul>
+
+<h3>Downloads by an installer per day</h3>
+<p class="muted">The shaded days are weekends. Each package has its own scale.</p>
+<div class="panels" id="daily"></div>
+
+<h2>What they download</h2>
+<div class="scroll"><table id="what"></table></div>
+<ul class="notes">
+  <li><b>Median release age</b>: half of the downloads are of a release older than this. Old releases mean pinned
+    environments and old Pythons, more than new users.</li>
+  <li><b>From source</b>: downloads of the sdist, so no wheel matched the platform (or the user asked for a build).</li>
+</ul>
+<h3>Python version of the downloads</h3>
+<div class="legend" id="pythons-legend"></div>
+<div class="bars" id="pythons"></div>
+
+<h2>PyPI and conda per month</h2>
+<p class="muted" id="conda-month"></p>
+<div class="scroll"><table id="conda"></table></div>
+<p class="notes">The conda numbers have no CI flag, so the conda share compares all the conda downloads with all
+  the PyPI downloads by an installer. <code>anaconda</code> is the defaults channel.</p>
+<div class="toggle" id="source">
+  <button type="button" data-source="pypi" aria-pressed="true">PyPI, by an installer</button>
+  <button type="button" data-source="conda" aria-pressed="false">conda, all channels</button>
+</div>
+<div class="panels" id="months"></div>
+
+<h2 id="details">Details per package</h2>
+<div id="packages"></div>
+
+<h2 id="methods">Methods and limits</h2>
+<ul>
+  <li><b>Sources.</b> The PyPI download logs, queried from the public ClickHouse instance behind
+    <a href="https://clickpy.clickhouse.com">clickpy.clickhouse.com</a>. The release dates come from the PyPI JSON
+    API. The conda numbers come from the monthly files of
+    <a href="https://github.com/anaconda/anaconda-package-data">anaconda-package-data</a>.</li>
+  <li><b>A download is not an install, and not a user.</b> pip and uv cache the wheels: reinstalling in a new
+    environment on the same machine is often not a download. A CI job or a Docker build without cache is one each
+    time. So the numbers measure how often the package is fetched, mostly by machines.</li>
+  <li><b>By an installer.</b> The user agent says which tool downloads. Mirrors (bandersnatch, Nexus,
+    Artifactory), browsers and scripts are dropped. People behind a company mirror are invisible: the mirror
+    downloads each file once.</li>
+  <li><b>CI.</b> pip and uv report since <span id="ci-start"></span> whether a CI environment variable is set.
+    poetry, pdm and old pips don't, and a Docker build started by CI does not see the variable. So the CI share is
+    a lower bound, and <b>Linux, not CI</b> still has a lot of automation.</li>
+  <li><b>Desktop.</b> Windows and macOS outside of CI. Servers and containers almost never run these OSes, so
+    these downloads are mostly from laptops and workstations. It still counts each new environment of the same
+    person, misses WSL and Linux desktops, and misses conda users.</li>
+  <li><b>Fingerprints.</b> The logs have no IP address or user id. Distinct fingerprints saturate on a popular
+    package (a few thousand combinations exist), so this only tells how spread the downloads are, not how many
+    users there are.</li>
+  <li><b>Countries</b> are those of the IP address: the US share is mostly cloud regions.</li>
+  <li><b>conda.</b> Monthly counts per channel, published a few days after the end of the month, with CI and
+    mirrors included. The nightly channels are left out.</li>
+  <li><b>Period.</b> <span class="days"></span> days is short: a release, a holiday or one misconfigured pipeline
+    moves the numbers. Check the monthly plots before reading a change as a trend.</li>
+</ul>
+<p class="muted">Made by
+  <a href="https://github.com/cakedev0/my-scikit-learn-backlog/blob/main/scripts/pypi-installs/dashboard.py"><code>scripts/pypi-installs/dashboard.py</code></a>,
+  refreshed every month.</p>
+</main>
+<div id="tooltip" role="status"></div>
+
+<script>
+const DATA = /*DATA*/null;
+</script>
+<script>
+"use strict";
+const SEGMENTS = [
+  ["CI", "CI", "--ci"],
+  ["Linux", "Linux, not CI", "--linux"],
+  ["macOS", "macOS, not CI", "--macos"],
+  ["Windows", "Windows, not CI", "--windows"],
+  ["Other", "Other OS", "--other"],
+];
+const PYTHONS = [
+  ["3.9 or older", "3.9 or older", "--py-1"],
+  ["3.10", "3.10", "--py-2"],
+  ["3.11", "3.11", "--py-3"],
+  ["3.12", "3.12", "--py-4"],
+  ["3.13", "3.13", "--py-5"],
+  ["3.14 or newer", "3.14 or newer", "--py-6"],
+  ["unknown", "unknown", "--other"],
+];
+const SVG = "http://www.w3.org/2000/svg";
+const packages = DATA.packages;
+const reference = packages[0];
+
+// Formatting
+
+function short(value) {
+  if (value >= 1e9) return `${+(value / 1e9).toPrecision(3)}B`;
+  if (value >= 1e6) return `${+(value / 1e6).toPrecision(3)}M`;
+  if (value >= 1e4) return `${+(value / 1e3).toPrecision(3)}k`;
+  return Math.round(value).toLocaleString("en-US");
+}
+function share(part, total) {
+  if (!total) return "n/a";
+  const value = (100 * part) / total;
+  if (value > 0 && value < 0.05) return "<0.1%";
+  return value >= 9.5 || value === 0 ? `${value.toFixed(0)}%` : `${value.toFixed(1)}%`;
+}
+function ratio(part, total) {
+  return total ? part / total : -1;
+}
+function dayText(text, withYear) {
+  const options = { month: "short", day: "numeric", timeZone: "UTC" };
+  if (withYear) options.year = "numeric";
+  return new Date(`${text}T00:00:00Z`).toLocaleDateString("en-US", options);
+}
+function monthText(text) {
+  const options = { month: "short", year: "numeric", timeZone: "UTC" };
+  return new Date(`${text}T00:00:00Z`).toLocaleDateString("en-US", options);
+}
+function topShares(pairs, total, count) {
+  const text = pairs.slice(0, count).map(([name, n]) => `${name} ${share(n, total)}`);
+  return text.join(", ") || "n/a";
+}
+function sum(values) {
+  return values.reduce((a, b) => a + b, 0);
+}
+
+// DOM helpers. The names come from the logs: they only go in text nodes.
+
+function el(tag, attributes = {}, ...children) {
+  const node = document.createElement(tag);
+  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+  node.append(...children);
+  return node;
+}
+function svg(tag, attributes = {}, ...children) {
+  const node = document.createElementNS(SVG, tag);
+  for (const [key, value] of Object.entries(attributes)) node.setAttribute(key, value);
+  node.append(...children);
+  return node;
+}
+
+// The name of a package, with the color of its group.
+function nameOf(item, ...rest) {
+  const label = DATA.groups[item.group];
+  return el("span", { class: "name", style: `--group: var(--g-${item.group})`, title: label }, item.name, ...rest);
+}
+
+const tooltip = document.getElementById("tooltip");
+function showTooltip(event, head, rows) {
+  tooltip.replaceChildren(el("div", { class: "head" }, head));
+  for (const [label, value, color] of rows) {
+    const row = el("div", { class: "row" });
+    if (color) row.append(el("span", { class: "key", style: `--color: var(${color})` }));
+    row.append(el("span", {}, label), el("b", {}, value));
+    tooltip.append(row);
+  }
+  tooltip.style.display = "block";
+  const box = tooltip.getBoundingClientRect();
+  let x = event.clientX + 14;
+  let y = event.clientY + 14;
+  if (event.clientX === undefined) {
+    // Keyboard focus: next to the focused mark.
+    const target = event.target.getBoundingClientRect();
+    x = target.left;
+    y = target.bottom + 6;
+  }
+  if (x + box.width > window.innerWidth - 8) x = Math.max(8, x - box.width - 28);
+  if (y + box.height > window.innerHeight - 8) y = Math.max(8, y - box.height - 28);
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top = `${y}px`;
+}
+function hideTooltip() {
+  tooltip.style.display = "none";
+}
+function hover(node, callback) {
+  node.addEventListener("pointermove", callback);
+  node.addEventListener("focus", callback);
+  node.addEventListener("pointerleave", hideTooltip);
+  node.addEventListener("blur", hideTooltip);
+}
+
+// Tables: each column is [label, text(package), sort key(package)].
+
+function table(id, columns, rows) {
+  const root = document.getElementById(id);
+  const body = el("tbody");
+  const heads = columns.map(([label], index) => {
+    const th = el("th", { scope: "col" }, el("button", { type: "button" }, label));
+    th.firstChild.addEventListener("click", () => {
+      const down = th.getAttribute("aria-sort") !== "descending";
+      heads.forEach((head) => head.removeAttribute("aria-sort"));
+      th.setAttribute("aria-sort", down ? "descending" : "ascending");
+      const key = columns[index][2];
+      const sorted = [...rows].sort((a, b) => {
+        const [x, y] = [key(a), key(b)];
+        const order = typeof x === "string" ? x.localeCompare(y) : x - y;
+        return down ? -order : order;
+      });
+      draw(sorted);
+    });
+    return th;
+  });
+  function draw(ordered) {
+    body.replaceChildren(
+      ...ordered.map((row) =>
+        el("tr", { style: `--group: var(--g-${row.group})` }, ...columns.map(([, text]) => el("td", {}, text(row)))),
+      ),
+    );
+  }
+  draw(rows);
+  root.replaceChildren(el("thead", {}, el("tr", {}, ...heads)), body);
+}
+
+// One 100% stacked bar per package.
+
+function legend(id, keys) {
+  document.getElementById(id).replaceChildren(
+    ...keys.map(([, label, color]) => el("span", { style: `--color: var(${color})` }, label)),
+  );
+}
+function shareBars(id, keys, counts) {
+  const root = document.getElementById(id);
+  for (const item of packages) {
+    const values = counts(item);
+    const total = sum(Object.values(values));
+    const bar = el("div", { class: "bar" });
+    for (const [key, label, color] of keys) {
+      const value = values[key] || 0;
+      if (!value) continue;
+      const part = el("div", {
+        style: `--color: var(${color}); flex: ${value / total} 1 0`,
+        tabindex: "0",
+        role: "img",
+        "aria-label": `${item.name}, ${label}: ${share(value, total)}`,
+      });
+      hover(part, (event) =>
+        showTooltip(event, item.name, [[label, `${share(value, total)} (${short(value)})`, color]]),
+      );
+      bar.append(part);
+    }
+    root.append(nameOf(item), bar);
+  }
+}
+
+// Small multiples.
+
+const WIDTH = 300;
+const HEIGHT = 150;
+const PAD = { left: 38, right: 6, top: 8, bottom: 20 };
+
+function niceMax(value) {
+  if (value <= 0) return 1;
+  const power = 10 ** Math.floor(Math.log10(value));
+  for (const step of [1, 1.5, 2, 3, 4, 5, 6, 8, 10]) {
+    if (step * power >= value) return step * power;
+  }
+  return 10 * power;
+}
+function frame(max, labels) {
+  const root = svg("svg", { viewBox: `0 0 ${WIDTH} ${HEIGHT}` });
+  const y = (value) => HEIGHT - PAD.bottom - (value / max) * (HEIGHT - PAD.top - PAD.bottom);
+  for (const tick of [0, max / 2, max]) {
+    root.append(
+      svg("line", { class: "gridline", x1: PAD.left, x2: WIDTH - PAD.right, y1: y(tick), y2: y(tick) }),
+      svg("text", { x: PAD.left - 5, y: y(tick) + 3.5, "text-anchor": "end" }, short(tick)),
+    );
+  }
+  root.append(
+    svg("text", { x: PAD.left, y: HEIGHT - 5 }, labels[0]),
+    svg("text", { x: WIDTH - PAD.right, y: HEIGHT - 5, "text-anchor": "end" }, labels[1]),
+  );
+  return [root, y];
+}
+function panel(item, note, chart) {
+  const name = nameOf(item);
+  return el("div", { class: "panel" }, el("header", {}, el("b", {}, name), el("span", {}, note)), chart);
+}
+
+function dailyPanel(item) {
+  const days = item.daily;
+  const totals = days.map((day) => sum(SEGMENTS.map(([key]) => day[key] || 0)));
+  const max = niceMax(Math.max(...totals));
+  const [root, y] = frame(max, [dayText(days[0].day), dayText(days[days.length - 1].day)]);
+  const step = (WIDTH - PAD.left - PAD.right) / days.length;
+  days.forEach((day, index) => {
+    const x = PAD.left + index * step;
+    const weekday = new Date(`${day.day}T00:00:00Z`).getUTCDay();
+    if (weekday === 0 || weekday === 6) {
+      root.insertBefore(
+        svg("rect", { class: "weekend", x, y: PAD.top, width: step, height: HEIGHT - PAD.top - PAD.bottom }),
+        root.firstChild,
+      );
+    }
+    let base = 0;
+    for (const [key, , color] of SEGMENTS) {
+      const value = day[key] || 0;
+      if (!value) continue;
+      root.append(
+        svg("rect", {
+          x: x + 0.7,
+          width: Math.max(1, step - 1.4),
+          y: y(base + value),
+          height: y(base) - y(base + value),
+          fill: `var(${color})`,
+        }),
+      );
+      base += value;
+    }
+    const hit = svg("rect", {
+      class: "hit",
+      x,
+      y: PAD.top,
+      width: step,
+      height: HEIGHT - PAD.top - PAD.bottom,
+    });
+    hover(hit, (event) =>
+      showTooltip(event, `${item.name}, ${dayText(day.day)}`, [
+        ["Total", short(totals[index])],
+        ...SEGMENTS.filter(([key]) => day[key]).map(([key, label, color]) => [label, short(day[key]), color]),
+      ]),
+    );
+    root.append(hit);
+  });
+  return panel(item, `${short(sum(totals))} in ${DATA.days} days`, root);
+}
+
+function condaTotal(counts) {
+  return counts === null ? null : sum(Object.values(counts));
+}
+function monthPanel(item, source) {
+  const months = DATA.months;
+  const values =
+    source === "pypi" ? DATA.pypi_months[item.name] : DATA.conda_months[item.name].map(condaTotal);
+  const known = values.filter((value) => value !== null);
+  const max = niceMax(Math.max(0, ...known));
+  const [root, y] = frame(max, [monthText(months[0]), monthText(months[months.length - 1])]);
+  const step = (WIDTH - PAD.left - PAD.right) / Math.max(1, months.length - 1);
+  const x = (index) => PAD.left + index * step;
+  const points = values.map((value, index) => (value === null ? null : `${x(index)},${y(value)}`));
+  root.append(
+    svg("polyline", {
+      points: points.filter(Boolean).join(" "),
+      fill: "none",
+      stroke: "var(--line)",
+      "stroke-width": 2,
+      "stroke-linejoin": "round",
+    }),
+  );
+  const cross = svg("line", { class: "cross", y1: PAD.top, y2: HEIGHT - PAD.bottom });
+  const dot = svg("circle", { r: 4, fill: "var(--line)", stroke: "var(--surface)", "stroke-width": 2 });
+  dot.style.visibility = "hidden";
+  const hit = svg("rect", { class: "hit", x: 0, y: 0, width: WIDTH, height: HEIGHT });
+  hit.addEventListener("pointermove", (event) => {
+    const box = root.getBoundingClientRect();
+    const position = ((event.clientX - box.left) / box.width) * WIDTH;
+    let index = Math.round((position - PAD.left) / step);
+    index = Math.min(months.length - 1, Math.max(0, index));
+    if (values[index] === null) {
+      cross.style.visibility = dot.style.visibility = "hidden";
+      showTooltip(event, `${item.name}, ${monthText(months[index])}`, [["Not published yet", ""]]);
+      return;
+    }
+    cross.setAttribute("x1", x(index));
+    cross.setAttribute("x2", x(index));
+    dot.setAttribute("cx", x(index));
+    dot.setAttribute("cy", y(values[index]));
+    cross.style.visibility = dot.style.visibility = "visible";
+    const rows = [[source === "pypi" ? "PyPI, by an installer" : "conda", short(values[index])]];
+    if (source === "conda") {
+      const channels = Object.entries(DATA.conda_months[item.name][index]).sort((a, b) => b[1] - a[1]);
+      if (channels.length > 1) rows.push(...channels.map(([name, n]) => [name, short(n)]));
+    }
+    showTooltip(event, `${item.name}, ${monthText(months[index])}`, rows);
+  });
+  hit.addEventListener("pointerleave", () => {
+    cross.style.visibility = dot.style.visibility = "hidden";
+    hideTooltip();
+  });
+  root.append(cross, dot, hit);
+  const last = known.length ? short(known[known.length - 1]) : "n/a";
+  return panel(item, `last month: ${last}`, root);
+}
+function drawMonths(source) {
+  document.getElementById("months").replaceChildren(...packages.map((item) => monthPanel(item, source)));
+  for (const button of document.querySelectorAll("#source button")) {
+    button.setAttribute("aria-pressed", String(button.dataset.source === source));
+  }
+}
+
+// Page
+
+const name = ["Package", (p) => nameOf(p), (p) => p.name];
+document.getElementById("groups-legend").replaceChildren(
+  ...Object.entries(DATA.groups).map(([id, label]) => el("span", { style: `--color: var(--g-${id})` }, label)),
+);
+document.getElementById("period").textContent =
+  `PyPI numbers: ${dayText(DATA.since)} to ${dayText(DATA.until, true)} (${DATA.days} days).`;
+for (const node of document.querySelectorAll(".installers")) node.textContent = DATA.installers.join(", ");
+for (const node of document.querySelectorAll(".days")) node.textContent = DATA.days;
+document.getElementById("ci-start").textContent = dayText(DATA.ci_flag_start, true);
+
+table(
+  "summary",
+  [
+    name,
+    ["All downloads", (p) => short(p.all), (p) => p.all],
+    ["By an installer", (p) => short(p.downloads), (p) => p.downloads],
+    [
+      `vs previous ${DATA.days} days`,
+      (p) => (p.previous ? `${p.downloads >= p.previous ? "+" : ""}${(100 * (p.downloads / p.previous - 1)).toFixed(0)}%` : "new"),
+      (p) => (p.previous ? p.downloads / p.previous : Infinity),
+    ],
+    ["In CI", (p) => share(p.segments.CI, p.downloads), (p) => ratio(p.segments.CI, p.downloads)],
+    ["Desktop", (p) => short(p.desktop), (p) => p.desktop],
+    [
+      `Desktop per 100 ${reference.name}`,
+      (p) => {
+        const value = (100 * p.desktop) / reference.desktop;
+        return value >= 10 ? value.toFixed(0) : String(+value.toPrecision(2));
+      },
+      (p) => p.desktop,
+    ],
+  ],
+  packages,
+);
+
+legend("segments-legend", SEGMENTS);
+shareBars("segments", SEGMENTS, (p) => p.segments);
+table(
+  "who",
+  [
+    name,
+    ["CI", (p) => share(p.segments.CI, p.downloads), (p) => ratio(p.segments.CI, p.downloads)],
+    ["Linux, not CI", (p) => share(p.segments.Linux, p.downloads), (p) => ratio(p.segments.Linux, p.downloads)],
+    ["Desktop", (p) => share(p.desktop, p.downloads), (p) => ratio(p.desktop, p.downloads)],
+    [
+      "Weekend / weekday",
+      (p) => (p.weekend_ratio === null ? "n/a" : p.weekend_ratio.toFixed(2)),
+      (p) => (p.weekend_ratio === null ? -1 : p.weekend_ratio),
+    ],
+    ["By uv", (p) => share(p.uv, p.downloads), (p) => ratio(p.uv, p.downloads)],
+    ["Fingerprints", (p) => p.clients.toLocaleString("en-US"), (p) => p.clients],
+    ["Top fingerprint", (p) => share(p.top_clients[0][1], p.downloads), (p) => ratio(p.top_clients[0][1], p.downloads)],
+    [
+      "Top desktop countries",
+      (p) => topShares(p.desktop_countries, p.desktop, 3),
+      (p) => (p.desktop_countries[0] || [""])[0],
+    ],
+  ],
+  packages,
+);
+document.getElementById("daily").replaceChildren(...packages.map(dailyPanel));
+
+function ageText(days) {
+  if (days === null) return "n/a";
+  const months = Math.round(days / 30.4);
+  if (months < 1) return "<1 month";
+  return `${months} month${months > 1 ? "s" : ""}`;
+}
+table(
+  "what",
+  [
+    name,
+    ["Latest release", (p) => `${p.latest} (${dayText(p.latest_day, true)})`, (p) => p.latest_day],
+    ["On the latest release", (p) => share(p.latest_downloads, p.downloads), (p) => ratio(p.latest_downloads, p.downloads)],
+    ["Median release age", (p) => ageText(p.median_age_days), (p) => (p.median_age_days === null ? -1 : p.median_age_days)],
+    ["Releases older than 2 years", (p) => share(p.older_than_2_years, p.dated), (p) => ratio(p.older_than_2_years, p.dated)],
+    [
+      "Python 3.9 or older",
+      (p) => share(p.pythons["3.9 or older"] || 0, p.downloads),
+      (p) => ratio(p.pythons["3.9 or older"] || 0, p.downloads),
+    ],
+    ["From source", (p) => share(p.sdist, p.downloads), (p) => ratio(p.sdist, p.downloads)],
+  ],
+  packages,
+);
+legend("pythons-legend", PYTHONS);
+shareBars("pythons", PYTHONS, (p) => p.pythons);
+
+// The last month that Anaconda has published.
+let condaIndex = -1;
+DATA.months.forEach((_, index) => {
+  if (DATA.conda_months[reference.name][index] !== null) condaIndex = index;
+});
+if (condaIndex >= 0) {
+  const conda = (p) => DATA.conda_months[p.name][condaIndex];
+  const pypi = (p) => DATA.pypi_months[p.name][condaIndex];
+  const others = (p) =>
+    Object.entries(conda(p))
+      .filter(([channel]) => channel !== "conda-forge")
+      .sort((a, b) => b[1] - a[1]);
+  document.getElementById("conda-month").textContent =
+    `Downloads in ${monthText(DATA.months[condaIndex])}, the last month published for conda.`;
+  table(
+    "conda",
+    [
+      name,
+      ["PyPI, by an installer", (p) => short(pypi(p)), pypi],
+      ["conda-forge", (p) => short(conda(p)["conda-forge"] || 0), (p) => conda(p)["conda-forge"] || 0],
+      [
+        "Other conda channels",
+        (p) => others(p).map(([channel, n]) => `${channel} ${short(n)}`).join(", ") || "0",
+        (p) => sum(others(p).map(([, n]) => n)),
+      ],
+      [
+        "conda share",
+        (p) => share(condaTotal(conda(p)), condaTotal(conda(p)) + pypi(p)),
+        (p) => ratio(condaTotal(conda(p)), condaTotal(conda(p)) + pypi(p)),
+      ],
+    ],
+    packages,
+  );
+} else {
+  document.getElementById("source").hidden = true;
+}
+for (const button of document.querySelectorAll("#source button")) {
+  button.addEventListener("click", () => drawMonths(button.dataset.source));
+}
+drawMonths("pypi");
+
+document.getElementById("packages").replaceChildren(
+  ...packages.map((p) => {
+    const lines = [];
+    if (p.pypi.length > 1 || p.pypi[0] !== p.name) lines.push(`PyPI packages: ${p.pypi.join(", ")}.`);
+    lines.push(
+      `Installers: ${topShares(p.installers, p.downloads, 4)}.`,
+      `Countries, all installers: ${topShares(p.countries, p.downloads, 5)}.`,
+      `Countries, desktop: ${topShares(p.desktop_countries, p.desktop, 5)}.`,
+      `Releases: ${topShares(p.versions, p.downloads, 5)}.`,
+    );
+    const clients = el(
+      "ul",
+      {},
+      ...p.top_clients.map(([label, n]) => el("li", {}, `${share(n, p.downloads)}: ${label}`)),
+    );
+    return el(
+      "details",
+      {},
+      el("summary", {}, nameOf(p, ` (${short(p.downloads)} by an installer)`)),
+      el("ul", {}, ...lines.map((line) => el("li", {}, line)), el("li", {}, "Largest fingerprints:", clients)),
+    );
+  }),
+);
+</script>
+</body>
+</html>
