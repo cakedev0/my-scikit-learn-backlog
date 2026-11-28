@@ -42,6 +42,16 @@ static double now(void) {
     clock_gettime(CLOCK_MONOTONIC, &ts);
     return ts.tv_sec + ts.tv_nsec * 1e-9;
 }
+// Spin hint: `pause` on x86, `isb` on arm64 (`yield` is a nop on Neoverse, so
+// 300000 iterations would be much shorter than on x86).
+#if defined(__x86_64__) || defined(__i386__)
+#define cpu_relax() __builtin_ia32_pause()
+#elif defined(__aarch64__)
+#define cpu_relax() __asm__ volatile("isb" ::: "memory")
+#else
+#define cpu_relax() __asm__ volatile("" ::: "memory")
+#endif
+
 static void fwait(atomic_int *a, int v) { syscall(SYS_futex, a, FUTEX_WAIT_PRIVATE, v, NULL, NULL, 0); }
 static void fwake(atomic_int *a) { syscall(SYS_futex, a, FUTEX_WAKE_PRIVATE, INT_MAX, NULL, NULL, 0); }
 
@@ -69,7 +79,7 @@ static void *worker(void *arg) {
         for (long i = 0; i < spincount; i++) {  // like libgomp's do_spin
             g = atomic_load_explicit(&gen, memory_order_acquire);
             if (g != seen) goto go;
-            __builtin_ia32_pause();
+            cpu_relax();
         }
         atomic_fetch_add(&nsleep, 1);
         while ((g = atomic_load(&gen)) == seen) fwait(&gen, seen);
@@ -122,7 +132,7 @@ int main(int argc, char **argv) {
             long i;
             for (i = 0; i < spincount; i++) {
                 if (atomic_load_explicit(&done, memory_order_acquire) == nt - 1) break;
-                __builtin_ia32_pause();
+                cpu_relax();
             }
             if (i == spincount) {
                 int d;

@@ -1,0 +1,100 @@
+kernel 7.4.0-rc3, 24 CPUs, HZ config: CONFIG_HZ=250
+cpu0 capacity 1024
+cpu1 capacity 1024
+cpu10 capacity 701
+cpu11 capacity 701
+cpu12 capacity 701
+cpu13 capacity 701
+cpu14 capacity 701
+cpu15 capacity 701
+cpu16 capacity 701
+cpu17 capacity 701
+cpu18 capacity 701
+cpu19 capacity 701
+cpu2 capacity 1024
+cpu20 capacity 701
+cpu21 capacity 701
+cpu22 capacity 701
+cpu23 capacity 701
+cpu3 capacity 1024
+cpu4 capacity 1024
+cpu5 capacity 1024
+cpu6 capacity 1024
+cpu7 capacity 1024
+cpu8 capacity 701
+cpu9 capacity 701
+/sys/kernel/debug/sched/domains/cpu0/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu0/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu1/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu1/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu10/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu10/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu11/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu11/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu12/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu12/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu13/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu13/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu14/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu14/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu15/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu15/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu16/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu16/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu17/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu17/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu18/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu18/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu19/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu19/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu2/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu2/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu20/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu20/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu21/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu21/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu22/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu22/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu23/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu23/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu3/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu3/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu4/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu4/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu5/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu5/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu6/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu6/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu7/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu7/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu8/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu8/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu9/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu9/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+energy aware: 
+### round 1, SIS_UTIL
+threads=24 spincount=300000 gap=6000us: call median 0.323 p90 0.330 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.327 p90 0.334 max 4.6 ms (a call is 100 regions); regions > 1 ms: 1/15000; regions with 2 threads on one CPU: 1; episodes: 1, total 4 ms, longest 4 ms
+threads=24 spincount=300000 gap=6000us: call median 0.351 p90 0.357 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.380 p90 0.385 max 8.8 ms (a call is 100 regions); regions > 1 ms: 2/15000; regions with 2 threads on one CPU: 2; episodes: 1, total 8 ms, longest 8 ms
+pinned: threads=24 spincount=300000 gap=6000us: call median 0.325 p90 0.332 max 0.6 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 1, NO_SIS_UTIL
+threads=24 spincount=300000 gap=6000us: call median 0.420 p90 0.426 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.411 p90 0.418 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.368 p90 0.373 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.363 p90 0.372 max 16.3 ms (a call is 100 regions); regions > 1 ms: 4/15000; regions with 2 threads on one CPU: 4; episodes: 1, total 16 ms, longest 16 ms
+pinned: threads=24 spincount=300000 gap=6000us: call median 0.354 p90 0.360 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 2, SIS_UTIL
+threads=24 spincount=300000 gap=6000us: call median 0.357 p90 0.362 max 0.9 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 25.606 p90 233.973 max 334.7 ms (a call is 100 regions); regions > 1 ms: 3262/15000; regions with 2 threads on one CPU: 3244; episodes: 99, total 13260 ms, longest 335 ms
+threads=24 spincount=300000 gap=6000us: call median 0.361 p90 0.365 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 25.605 p90 281.898 max 353.9 ms (a call is 100 regions); regions > 1 ms: 3368/15000; regions with 2 threads on one CPU: 3351; episodes: 107, total 13832 ms, longest 354 ms
+pinned: threads=24 spincount=300000 gap=6000us: call median 0.354 p90 0.360 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 2, NO_SIS_UTIL
+threads=24 spincount=300000 gap=6000us: call median 0.384 p90 0.390 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.347 p90 0.353 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.367 p90 0.374 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=24 spincount=300000 gap=6000us: call median 0.429 p90 0.435 max 0.5 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+pinned: threads=24 spincount=300000 gap=6000us: call median 0.359 p90 0.366 max 0.4 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+DONE
+[   48.537963] reboot: Power down
