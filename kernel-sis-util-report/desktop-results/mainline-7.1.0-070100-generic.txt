@@ -1,0 +1,43 @@
+kernel 7.1.0-070100-generic
+root=LABEL=TARGET_OS ro net.ifnames=0 biosdevname=0 ktest=1 panic=10 softlockup_panic=1 hardlockup_panic=1
+ 17:08:44 up 1 min,  0 users,  load average: 0.14, 0.04, 0.01
+/sys/kernel/debug/sched/domains/cpu0/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu8/domain0 CLS SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_CLUSTER SD_SHARE_LLC 
+/sys/kernel/debug/sched/domains/cpu8/domain1 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+### round 1, set SIS_UTIL, features: SIS_UTIL
+24 all | gap=6000us: call median 0.415 p90 0.463 max 22.4 ms; regions > 1 ms: 12/15000; stacked: 11; episodes: 3, total 29 ms, longest 20 ms
+24 all | gap=6000us: call median 0.427 p90 0.485 max 281.0 ms; regions > 1 ms: 205/15000; stacked: 204; episodes: 3, total 577 ms, longest 293 ms
+24 all | gap=6000us: call median 0.428 p90 0.488 max 277.6 ms; regions > 1 ms: 105/15000; stacked: 103; episodes: 3, total 286 ms, longest 278 ms
+24 all | gap=6000us: call median 0.418 p90 0.468 max 281.1 ms; regions > 1 ms: 199/15000; stacked: 201; episodes: 4, total 560 ms, longest 281 ms
+8 P only | gap=6000us: call median 0.339 p90 0.370 max 0.4 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+16 E only | gap=6000us: call median 0.275 p90 0.307 max 0.3 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+16 E only | gap=6000us: call median 0.286 p90 0.316 max 0.3 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+24 pinned | gap=6000us: call median 0.395 p90 0.431 max 2.1 ms; regions > 1 ms: 1/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 1, set NO_SIS_UTIL, features: NO_SIS_UTIL
+24 all | gap=6000us: call median 0.413 p90 0.450 max 281.3 ms; regions > 1 ms: 103/15000; stacked: 102; episodes: 2, total 287 ms, longest 281 ms
+24 all | gap=6000us: call median 0.430 p90 0.518 max 281.0 ms; regions > 1 ms: 205/15000; stacked: 203; episodes: 3, total 576 ms, longest 564 ms
+24 all | gap=6000us: call median 0.389 p90 0.448 max 276.4 ms; regions > 1 ms: 204/15000; stacked: 206; episodes: 4, total 567 ms, longest 276 ms
+24 all | gap=6000us: call median 0.407 p90 0.464 max 280.7 ms; regions > 1 ms: 303/15000; stacked: 302; episodes: 4, total 847 ms, longest 281 ms
+8 P only | gap=6000us: call median 0.340 p90 0.371 max 0.5 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+16 E only | gap=6000us: call median 0.282 p90 0.313 max 281.1 ms; regions > 1 ms: 100/15000; stacked: 100; episodes: 1, total 281 ms, longest 281 ms
+16 E only | gap=6000us: call median 0.283 p90 0.308 max 0.4 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+24 pinned | gap=6000us: call median 0.383 p90 0.433 max 11.6 ms; regions > 1 ms: 2/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 2, set SIS_UTIL, features: SIS_UTIL
+24 all | gap=6000us: call median 0.411 p90 0.469 max 281.0 ms; regions > 1 ms: 307/15000; stacked: 308; episodes: 4, total 861 ms, longest 551 ms
+24 all | gap=6000us: call median 0.419 p90 0.466 max 281.1 ms; regions > 1 ms: 206/15000; stacked: 204; episodes: 3, total 572 ms, longest 281 ms
+24 all | gap=6000us: call median 0.423 p90 0.486 max 13.0 ms; regions > 1 ms: 5/15000; stacked: 4; episodes: 1, total 11 ms, longest 11 ms
+24 all | gap=6000us: call median 0.430 p90 0.501 max 280.7 ms; regions > 1 ms: 205/15000; stacked: 204; episodes: 4, total 573 ms, longest 281 ms
+8 P only | gap=6000us: call median 0.331 p90 0.360 max 0.6 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+16 E only | gap=6000us: call median 0.284 p90 0.319 max 0.4 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+16 E only | gap=6000us: call median 0.276 p90 0.301 max 0.3 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+24 pinned | gap=6000us: call median 0.409 p90 0.443 max 1.1 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 2, set NO_SIS_UTIL, features: NO_SIS_UTIL
+24 all | gap=6000us: call median 0.414 p90 0.470 max 278.4 ms; regions > 1 ms: 206/15000; stacked: 206; episodes: 4, total 571 ms, longest 278 ms
+24 all | gap=6000us: call median 0.418 p90 0.473 max 266.4 ms; regions > 1 ms: 101/15000; stacked: 102; episodes: 2, total 272 ms, longest 266 ms
+24 all | gap=6000us: call median 0.424 p90 0.483 max 283.7 ms; regions > 1 ms: 105/15000; stacked: 103; episodes: 3, total 296 ms, longest 284 ms
+24 all | gap=6000us: call median 0.422 p90 0.496 max 279.5 ms; regions > 1 ms: 209/15000; stacked: 209; episodes: 4, total 586 ms, longest 280 ms
+8 P only | gap=6000us: call median 0.399 p90 0.447 max 32.9 ms; regions > 1 ms: 19/15000; stacked: 17; episodes: 2, total 49 ms, longest 31 ms
+16 E only | gap=6000us: call median 0.285 p90 0.313 max 142.8 ms; regions > 1 ms: 50/15000; stacked: 50; episodes: 1, total 143 ms, longest 143 ms
+16 E only | gap=6000us: call median 0.285 p90 0.312 max 0.4 ms; regions > 1 ms: 0/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+24 pinned | gap=6000us: call median 0.380 p90 0.424 max 12.2 ms; regions > 1 ms: 1/15000; stacked: 0; episodes: 0, total 0 ms, longest 0 ms
+DONE Thu Nov 19 05:09:28 PM UTC 2026

@@ -1,0 +1,285 @@
+DRAFT, not sent. Status on 2026-11-19:
+
+- Measured on the laptop: the 7.0 vs 7.3 numbers, the bpftrace counts,
+  the traces.
+- Measured on the desktop (mainline v7.1, v7.2, v7.3, v7.4-rc3, one
+  kexec session of 3 min each): the stalls appear in v7.2 and
+  NO_SIS_UTIL removes them, 8 runs per setting, alternated.
+- No bisect. From the source, select_idle_capacity() is the only place
+  where SIS_UTIL acts on a wakeup on these machines, so the toggle points
+  at 61ea17a63719.
+- Not tested: NO_SIS_UTIL on the laptop (debugfs is blocked by the
+  Secure Boot lockdown), mainline kernels on the laptop.
+- The older 7.0 finding (double misfit push) is kept as a short section
+  at the end.
+
+---------------------------------------------------------------------------
+
+To: linux-kernel@vger.kernel.org
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+    Vincent Guittot <vincent.guittot@linaro.org>,
+    Dietmar Eggemann <dietmar.eggemann@arm.com>,
+    Valentin Schneider <vschneid@redhat.com>,
+    K Prateek Nayak <kprateek.nayak@amd.com>,
+    Andrea Righi <arighi@nvidia.com>,
+    Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Attachment: spin_pair.c
+
+Subject: [REGRESSION] sched/fair: wakeups leave idle CPUs unused on
+ hybrid x86 since the SIS_UTIL limit in select_idle_capacity()
+
+Hi,
+
+On a Core Ultra X7 358H (Panther Lake, 4 P + 8 E + 4 LP-E cores), a
+spinning fork/join workload with one thread per CPU got about 100 times
+slower between 7.0 and 7.3: a call of 100 tiny parallel regions takes
+58 to 80 ms (median) instead of 0.45 ms. Two threads of the team end up
+on one CPU while other CPUs are idle, and each region then costs a time
+slice.
+
+On 7.3, select_idle_capacity() returns -1 for about 3 wakeups out of 4
+of this workload, and each time at least one CPU of the package is idle
+(1040 of 1040 in one run). I suspect commit 61ea17a63719 ("sched/fair:
+Add SIS_UTIL support to select_idle_capacity()"), together with
+fdfe5a8cd873 ("sched/fair: Attach sched_domain_shared to
+sd_asym_cpucapacity"). I have not bisected, but on a second hybrid
+machine (Core Ultra 9 285) with mainline kernels, the stalls appear
+between v7.1 and v7.2, are still there in v7.4-rc3, and go away with
+NO_SIS_UTIL.
+
+#regzbot introduced: v7.1..v7.2
+
+Setup
+-----
+
+  CPU:      Core Ultra X7 358H, no SMT
+  Kernels:  Ubuntu 7.0.0-34-generic and Ubuntu 7.3.0-10-generic, same
+            machine and userspace. CONFIG_HZ=1000, PREEMPT_DYNAMIC
+            (CONFIG_PREEMPT_LAZY=y), CONFIG_SCHED_CLUSTER=y
+  cpufreq:  intel_pstate active, powersave, EPP balance_performance
+  EAS:      not active (sched_energy_aware reads empty)
+  Domains (from /proc/schedstat, same on both kernels):
+            CPUs 0-3 (P):      MC(0-11), PKG(0-15)
+            CPUs 4-11 (E):     CLS(4 CPUs each), MC(0-11), PKG(0-15)
+            CPUs 12-15 (LP-E): CLS(12-15), PKG(0-15)   (no L3, so no MC)
+  cpu_capacity: P 1005 (CPUs 0-2) and 1024 (CPU 3), E 701, LP-E 625
+  The machine is otherwise idle (no CPU above 1% over 10 s).
+
+Reproducer
+----------
+
+  gcc -O2 -pthread spin_pair.c -o spin_pair
+  ./spin_pair 150 100 6000    # calls, regions per call, serial gap (us)
+
+spin_pair.c (attached, pthreads and futex only) mimics an OpenMP runtime
+that spins before sleeping. One call is 100 tiny fork/join regions (a few
+us of work per thread, one thread per CPU), then 6 ms of serial work on
+the main thread. Workers spin 300000 `pause` iterations (3.6 ms on a P
+core, longer on the smaller cores) before futex_wait, as libgomp does.
+Each run is 150 calls (15000 regions). An episode is a series of
+consecutive regions with two threads of the team on one CPU.
+
+                                      7.0.0-34          7.3.0-10
+  16 threads, all CPUs                (10 runs)         (16 runs)
+    regions > 1 ms per run            6 to 91           3016 to 3828
+    episodes per run                  1 to 7            116 to 132
+    call median                       0.45 ms           58 to 80 ms
+    run time                          ~1 s              ~10 s
+  12 threads on CPUs 0-11 (P + E)
+    regions > 1 ms per run            0 (4 runs)        237 to 341 (5)
+  8 threads on CPUs 0-3,12-15
+    regions > 1 ms per run            0 (3 runs)        24, 96 (2)
+  12 threads on CPUs 4-15 (E + LP-E)  0 (4 runs)        0 (5 runs)
+  16 threads, pinned (SPIN_PIN=1)     0 (4 runs)        0 (5 runs)
+  16 threads, SPINCOUNT=1             0 (4 runs)        0 (2 runs)
+  16 threads, 1 ms gap                0 (4 runs)        0 (5 runs)
+
+On 7.3, other gaps give: 3 ms 0 (2 runs), 10 ms 0 and 1 (2 runs), 20 ms
+0 in 4 runs and 3123 in one.
+
+What happens on 7.3
+-------------------
+
+bpftrace on the exit of select_idle_capacity(), for the threads of one
+run (16 threads, 6 ms gap):
+
+  calls                                 1441
+  returned a CPU                         401
+  returned -1                           1040
+    with an idle CPU in the package     1040
+    with an idle LP-E CPU               1039
+    with only LP-E CPUs idle             755
+    target on a P core                  1037
+
+("idle" is rq->nr_running == 0 and !rq->ttwu_pending, read for the 16
+CPUs when the function returns.)
+
+In another run, sd->shared was set for all the calls and
+sd->shared->nr_idle_scan was between 5 and 12 (7 to 9 for most of the
+calls that returned -1).
+
+perf record -a --switch-events on two shorter runs (33 episodes):
+
+- 28 of the 33 episodes are on a P core. LP-E CPUs are idle during all of
+  them, E CPUs too in 9.
+- In 27, at least one of the threads had blocked (futex) on that CPU and was
+  woken there while the other one was running on it. In 10 of those, the
+  other one had been pushed there by active balance (`migration/N`) a few
+  ms before.
+- Median duration 51 and 57 ms, up to 280 ms (a whole call).
+
+So after a call, the threads on the P cores stop spinning first and
+sleep. Spinning threads from the smaller cores are moved to the idle P
+cores (misfit). When the next call wakes the sleepers, their previous
+CPU is taken, the idle CPUs are the small ones that were just vacated,
+and the wakeup does not find them.
+
+My reading of the code (v7.3 kernel/sched/fair.c)
+-------------------------------------------------
+
+select_idle_capacity() now has:
+
+	if (sched_feat(SIS_UTIL) && sd->shared) {
+		nr = READ_ONCE(sd->shared->nr_idle_scan) + 1;
+		/* overloaded domain is unlikely to have idle cpu/core */
+		if (nr == 1)
+			return -1;
+	}
+
+	for_each_cpu_wrap(cpu, cpus, target) {
+		...
+		if (!has_idle_core && --nr <= 0)
+			return best_cpu;
+
+With a target on a P core (CPUs 0-3) and nr_idle_scan of 7 to 9, the
+scan stops before CPUs 12-15, which are the LP-E cores. In v7.0 the
+function scanned the whole sd_asym_cpucapacity span. Spinning waiters
+keep the utilization high, so nr_idle_scan is low exactly when one or
+two CPUs are idle.
+
+v7.4-rc3 and tip sched/core have the same code. Both commits are in v7.2
+and not in v7.1, which matches the desktop results below.
+
+Mainline 7.1 to 7.4-rc3 and NO_SIS_UTIL on a second machine
+------------------------------------------------------------
+
+I cannot write to debugfs on the laptop (lockdown), so I did this on a
+desktop: Core Ultra 9 285 (Arrow Lake, 8 P + 16 E cores, no SMT, no LP-E
+cores). Domains: MC(0-23) for the P CPUs, CLS + MC(0-23) for the E CPUs.
+Kernels: Ubuntu mainline builds of v7.1, v7.2, v7.3 and v7.4-rc3, each
+started with kexec from the same installation. Same spin_pair command,
+24 threads. In each boot I alternated SIS_UTIL, NO_SIS_UTIL, SIS_UTIL,
+NO_SIS_UTIL with 4 runs each time (8 runs per cell, min to max):
+
+                      regions > 1 ms   episodes   time in episodes
+  v7.1      SIS_UTIL     5 to 307       1 to 4     0.01 to 0.9 s
+         NO_SIS_UTIL   101 to 303       2 to 4     0.3 to 0.8 s
+  v7.2      SIS_UTIL   837 to 1812     24 to 65    2.3 to 5.2 s
+         NO_SIS_UTIL     3 to 298       1 to 3     0.01 to 0.8 s
+  v7.3      SIS_UTIL   605 to 758      45 to 75    1.6 to 2.1 s
+         NO_SIS_UTIL     1 to 112       0 to 13    0 to 0.3 s
+  v7.4-rc3  SIS_UTIL   414 to 914      44 to 93    1.1 to 2.4 s
+         NO_SIS_UTIL     0 to 7         0 to 2     0 to 0.02 s
+
+(v7.3 NO_SIS_UTIL: 7 of the 8 runs have at most 16 regions > 1 ms and 3
+episodes.)
+
+So the many short episodes appear between v7.1 and v7.2, are still there
+in v7.4-rc3, and go away with NO_SIS_UTIL on the three kernels that have
+them. On v7.1 the flag makes no difference. The call p90 is 30 to 93 ms
+with SIS_UTIL on v7.2 and later, and 0.44 to 0.52 ms in the other cells
+(2.0 ms in one run).
+
+The episodes that remain on v7.1, and on v7.2 with NO_SIS_UTIL, are of a
+different kind: a few per run, about 280 ms each (a whole call). They
+are gone in v7.3 with NO_SIS_UTIL, I guess thanks to the cluster
+scheduling series. I have not traced them.
+
+With sd_asym_cpucapacity set, select_idle_sibling() returns right after
+select_idle_capacity() and never calls select_idle_cpu(). So, from my
+reading, the limit added by 61ea17a63719 is the only thing NO_SIS_UTIL
+changes on the wakeup path of these machines.
+
+What I have not done
+--------------------
+
+- No bisect between v7.1 and v7.2.
+- On the laptop I only compared 7.0 and 7.3. v7.3 also has "sched: Fix
+  cluster scheduling in the presence of asymmetric capacity", and there
+  the newly idle P cores pull tasks at the MC level (87 tasks gained in
+  one traced run, none on 7.0). The desktop regresses in v7.2, before
+  that series, so I do not think it is the cause.
+- No NO_SIS_UTIL run on the laptop, and no tracing on the desktop.
+- The laptop kernels are Ubuntu builds, not mainline.
+
+Why this may matter beyond this laptop
+--------------------------------------
+
+This is the default behaviour of OpenMP code built with a libgomp older
+than GCC 14 (as bundled in many Python wheels, scikit-learn included):
+threads spin for a few ms after each parallel region. Newer libgomp and
+libomp stopped spinning by default on hybrid x86 CPUs, from benchmark
+results and without an explanation of the mechanism:
+
+- libgomp, GCC 14, commit e1e127de18db ("x86: set spincount 1 for x86
+  hybrid platform"): "By test, we find in hybrid platform spincount 1 is
+  better", with SPEC 2017 speed fp geomean +6.3% on RPL and +21.1% on ADL.
+- libomp, 2021, commit 7a5680233e03 ("[OpenMP] Set default blocktime to 0
+  for hybrid cpu", D113012), no rationale in the commit message.
+
+Not spinning has its own cost, which can be much larger for code with
+many short regions. scikit-learn's HistGradientBoosting runs about 10000
+parallel regions per fit, and without spinning, waking the threads at
+each region dominates small and medium fits. On a Core Ultra X7 358H
+laptop with a recent libgomp (no spinning), a fit on the covtype dataset
+takes 11 s on 4 threads and 38 s on 8. With the old libgomp (spinning),
+small and medium fits stay roughly flat or keep getting faster up to 8
+threads [1][2]. In scikit-learn we are working around it by using fewer
+threads when the runtime does not spin [3]. We cannot pick the setting
+ourselves: libgomp reads GOMP_SPINCOUNT once, when it is loaded, and has
+no API to change it at runtime. So whether threads spin depends on the
+user's environment and on which libgomp gets loaded, not on the code.
+Spinning stays the better setting for code like this, and that is the
+case this regression hits.
+
+[1] https://github.com/scikit-learn/scikit-learn/issues/34764
+[2] https://probabl-ai.github.io/scikit-learn-benchmarks/hgb_scaling.html
+[3] https://github.com/scikit-learn/scikit-learn/pull/34935
+
+Questions
+---------
+
+1. Is the scan limit meant to apply when the asym-capacity span is as
+   small as 16 CPUs? Capacity-ordered CPU numbering puts the smallest
+   cores last, so a short scan from a big core never reaches them.
+2. Would it make sense to skip the limit in select_idle_capacity(), or
+   to keep scanning while no idle CPU has been found?
+
+I can run more tracing on the laptop (bpftrace fentry and tracepoints
+work, kprobes and debugfs do not). Testing a patch is harder for me: the
+laptop needs a signed kernel and I have limited access to the desktop.
+
+Smaller issue seen on 7.0: double misfit push
+---------------------------------------------
+
+On 7.0 the same workload stalls much less (table above), and 19 of the
+20 episodes I traced there start differently: an idle P core receives two
+running threads within 4 to 18 us, one pushed from an E core and one from
+an LP-E core, both by misfit active balance (the E core's stopper runs
+first each time). The two then share the P core for 18 to 66 ms (median
+30 ms) while an LP-E CPU is idle.
+
+/proc/schedstat for the P CPUs over one such run: MC level lb_failed 134
+(idle) with imb_misfit 134 and alb_pushed 135, PKG level lb_failed 57
+(idle) + 12 (newidle) with imb_misfit 56 + 12 and alb_pushed 68. The
+trace of that run has 136 E -> P and 69 LP-E -> P pushes.
+
+My reading of sched_balance_rq() and sched_balance_domains(): after
+queueing an active balance towards this_cpu, the function returns 0 and
+the walk continues with the parent domain, which can queue a second push
+towards the same, still idle, CPU. Nothing tracks a push already queued
+towards a destination. I have not traced the kernel functions to confirm
+that both pushes come from one pass. On 7.3 this pattern is 2 of 33
+episodes.
+
+Thanks,

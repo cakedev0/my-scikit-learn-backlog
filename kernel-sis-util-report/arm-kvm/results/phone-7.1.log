@@ -1,0 +1,44 @@
+kernel 7.1.0, 8 CPUs, HZ config: CONFIG_HZ=250
+cpu0 capacity 400
+cpu1 capacity 400
+cpu2 capacity 400
+cpu3 capacity 400
+cpu4 capacity 850
+cpu5 capacity 850
+cpu6 capacity 850
+cpu7 capacity 1024
+/sys/kernel/debug/sched/domains/cpu0/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu1/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu2/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu3/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu4/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu5/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu6/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+/sys/kernel/debug/sched/domains/cpu7/domain0 MC SD_BALANCE_NEWIDLE SD_BALANCE_EXEC SD_BALANCE_FORK SD_WAKE_AFFINE SD_ASYM_CPUCAPACITY SD_ASYM_CPUCAPACITY_FULL SD_SHARE_LLC SD_PREFER_SIBLING 
+energy aware: 
+### round 1, SIS_UTIL
+threads=8 spincount=300000 gap=6000us: call median 0.235 p90 0.239 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.232 p90 0.250 max 24.2 ms (a call is 100 regions); regions > 1 ms: 6/15000; regions with 2 threads on one CPU: 6; episodes: 1, total 24 ms, longest 24 ms
+threads=8 spincount=300000 gap=6000us: call median 0.253 p90 0.268 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.205 p90 0.221 max 0.2 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+pinned: threads=8 spincount=300000 gap=6000us: call median 0.227 p90 0.231 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 1, NO_SIS_UTIL
+threads=8 spincount=300000 gap=6000us: call median 0.207 p90 0.225 max 0.2 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.225 p90 0.239 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.234 p90 0.250 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.212 p90 0.228 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+pinned: threads=8 spincount=300000 gap=6000us: call median 0.201 p90 0.204 max 0.2 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 2, SIS_UTIL
+threads=8 spincount=300000 gap=6000us: call median 0.233 p90 0.240 max 28.2 ms (a call is 100 regions); regions > 1 ms: 7/15000; regions with 2 threads on one CPU: 7; episodes: 1, total 28 ms, longest 28 ms
+threads=8 spincount=300000 gap=6000us: call median 0.201 p90 0.218 max 0.2 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.216 p90 0.228 max 0.2 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.221 p90 0.230 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+pinned: threads=8 spincount=300000 gap=6000us: call median 0.211 p90 0.215 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+### round 2, NO_SIS_UTIL
+threads=8 spincount=300000 gap=6000us: call median 0.229 p90 0.244 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.217 p90 0.232 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.207 p90 0.222 max 0.2 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+threads=8 spincount=300000 gap=6000us: call median 0.237 p90 0.251 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+pinned: threads=8 spincount=300000 gap=6000us: call median 0.228 p90 0.231 max 0.3 ms (a call is 100 regions); regions > 1 ms: 0/15000; regions with 2 threads on one CPU: 0; episodes: 0, total 0 ms, longest 0 ms
+DONE
+[   20.842712] reboot: Power down

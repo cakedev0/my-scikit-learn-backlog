@@ -1,0 +1,11 @@
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -9048,7 +9048,7 @@ select_idle_capacity(struct task_struct *p, struct sched_domain *sd, int target)
+ 		 * Stop when the nr_idle_scan is exhausted (mirrors
+ 		 * select_idle_cpu() logic).
+ 		 */
+-		if (!has_idle_core && --nr <= 0)
++		if (!has_idle_core && --nr <= 0 && best_cpu >= 0)
+ 			return best_cpu;
+ 
+ 		if (!choose_idle_cpu(cpu, p))
